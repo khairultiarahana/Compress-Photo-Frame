@@ -1,0 +1,4323 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#245ce7" />
+    <title>Frame — Photo Studio</title>
+    <style>
+      :root {
+        --blue: #245ce7;
+        --dark: #1946b7;
+        --ink: #182338;
+        --muted: #66738a;
+        --line: #dce4f0;
+        --pale: #edf3ff;
+        --bg: #f7f9fd;
+        --green: #14704b;
+        --red: #b42318;
+        --radius: 12px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button,
+      a,
+      input {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+      button {
+        cursor: pointer;
+        border: 0;
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid #90b4ff;
+        outline-offset: 3px;
+      }
+      input:focus {
+        outline: 3px solid #245ce71b;
+        border-color: var(--blue);
+      }
+      [hidden] {
+        display: none !important;
+      }
+      svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+      }
+      .shell {
+        width: min(1520px, calc(100% - 64px));
+        margin: auto;
+      }
+      header {
+        background: #fff;
+        border-bottom: 1px solid var(--line);
+      }
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        min-height: 78px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        font-weight: 750;
+        font-size: 24px;
+        letter-spacing: -1px;
+      }
+      .brand > span {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        background: var(--blue);
+        border-radius: 9px;
+        color: #fff;
+      }
+      .brand em {
+        font-style: normal;
+        color: var(--blue);
+      }
+      .nav-note {
+        color: var(--muted);
+        font-size: 12px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .nav-note svg {
+        color: var(--blue);
+      }
+      main {
+        padding: 32px 0;
+      }
+      .intro {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+      .eyebrow {
+        font-size: 10px;
+        font-weight: 750;
+        letter-spacing: 2px;
+        color: var(--blue);
+        margin-bottom: 6px;
+      }
+      h1 {
+        font-size: clamp(27px, 3vw, 38px);
+        line-height: 1.2;
+        letter-spacing: -1.2px;
+      }
+      .intro p:last-child {
+        color: var(--muted);
+        margin-top: 9px;
+        font-size: 13px;
+      }
+      .button {
+        min-height: 40px;
+        padding: 9px 14px;
+        border-radius: 7px;
+        background: #eff3f9;
+        color: var(--ink);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 650;
+        transition: transform 0.18s, background 0.18s;
+      }
+      .button.primary {
+        background: var(--blue);
+        color: #fff;
+      }
+      .button.outline {
+        background: #fff;
+        border: 1px solid var(--line);
+      }
+      .button.soft {
+        background: var(--pale);
+        color: var(--blue);
+      }
+      .button.wide {
+        width: 100%;
+      }
+      .icon-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 6px;
+        background: transparent;
+        display: inline-grid;
+        place-items: center;
+        color: var(--muted);
+        flex-shrink: 0;
+      }
+      .icon-btn.small {
+        width: 26px;
+        height: 28px;
+      }
+      .batch {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        margin-bottom: 18px;
+        padding: 18px 20px;
+      }
+      .batch-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 13px;
+      }
+      .batch-title h2 {
+        font-size: 13px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .batch-title h2 svg {
+        color: var(--blue);
+      }
+      .batch-title p {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .batch-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 1fr auto;
+        gap: 13px;
+        align-items: end;
+      }
+      label,
+      .label {
+        display: block;
+        font-size: 11px;
+        font-weight: 650;
+        color: var(--ink);
+        margin-bottom: 6px;
+      }
+      .target {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 80px;
+        gap: 6px;
+      }
+      input[type="number"],
+      input[type="text"] {
+        min-width: 0;
+        width: 100%;
+        height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 8px 11px;
+        background: #fff;
+        color: var(--ink);
+      }
+      input[type="checkbox"] {
+        accent-color: var(--blue);
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        flex-shrink: 0;
+      }
+      .note {
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .batch-note {
+        margin-top: 10px;
+      }
+      .message {
+        padding: 12px 15px;
+        background: #fff1ee;
+        border: 1px solid #f5c9c0;
+        color: var(--red);
+        border-radius: 8px;
+        font-size: 12px;
+        margin-bottom: 16px;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+      }
+      .studio {
+        display: grid;
+        grid-template-columns: 246px minmax(0, 1fr) 282px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        min-height: 570px;
+        overflow: hidden;
+      }
+      .library {
+        border-right: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 17px 16px;
+        border-bottom: 1px solid var(--line);
+        min-height: 59px;
+      }
+      .section-head h2 {
+        font-size: 12px;
+        font-weight: 700;
+        display: flex;
+        gap: 7px;
+        align-items: center;
+      }
+      .count {
+        font-size: 10px;
+        color: var(--blue);
+        background: var(--pale);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+      .library-tools {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .check-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        font-size: 11px;
+        margin: 0;
+      }
+      .text-btn {
+        background: transparent;
+        color: var(--blue);
+        font-size: 11px;
+        padding: 4px 0;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .queue {
+        overflow: auto;
+        max-height: 570px;
+        padding: 7px;
+        scrollbar-width: thin;
+        scrollbar-color: #bfd0ec transparent;
+      }
+      .photo-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        padding: 8px 6px;
+        margin-bottom: 3px;
+      }
+      .photo-row.active {
+        border-color: #b4c9f7;
+        background: #f4f7ff;
+      }
+      .row-main {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 0;
+        flex: 1;
+        padding: 0;
+        text-align: left;
+        color: var(--ink);
+        background: transparent;
+      }
+      .thumb {
+        width: 43px;
+        height: 44px;
+        background: #eaf0f9;
+        border-radius: 5px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .row-text {
+        min-width: 0;
+      }
+      .row-text strong {
+        display: block;
+        font-size: 11px;
+        font-weight: 650;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 112px;
+      }
+      .row-text span {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+        margin-top: 2px;
+      }
+      .row-text span.done {
+        color: var(--green);
+      }
+      .row-text span.warn {
+        color: #9c6417;
+      }
+      .row-text span.failed {
+        color: var(--red);
+      }
+      .library-empty {
+        padding: 28px 17px;
+        text-align: center;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .library-bottom {
+        padding: 12px;
+        margin-top: auto;
+        border-top: 1px solid var(--line);
+      }
+      .workspace {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: #f8fafe;
+      }
+      .workspace-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 59px;
+        padding: 10px 15px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .preview-tabs {
+        display: flex;
+        background: #f1f4f9;
+        border-radius: 6px;
+        padding: 3px;
+        gap: 2px;
+      }
+      .tab {
+        padding: 6px 11px;
+        background: transparent;
+        border-radius: 4px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .tab.active {
+        background: #fff;
+        color: var(--blue);
+        box-shadow: 0 1px 3px #1a346515;
+      }
+      .workspace-tools {
+        display: flex;
+        gap: 3px;
+      }
+      .stage {
+        min-height: 400px;
+        flex: 1;
+        display: grid;
+        place-items: center;
+        padding: 25px;
+        position: relative;
+        background-color: #f5f7fb;
+        background-image: linear-gradient(45deg, #e9edf5 25%, transparent 25%),
+          linear-gradient(-45deg, #e9edf5 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #e9edf5 75%),
+          linear-gradient(-45deg, transparent 75%, #e9edf5 75%);
+        background-size: 20px 20px;
+        background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+      }
+      .stage img {
+        display: block;
+        max-width: 100%;
+        max-height: 460px;
+        object-fit: contain;
+        box-shadow: 0 4px 18px #18233812;
+      }
+      .stage img.fit {
+        max-height: 70vh;
+      }
+      .drop {
+        position: absolute;
+        inset: 18px;
+        border: 1.5px dashed #b6c9e8;
+        border-radius: 9px;
+        background: #f9fbff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 25px;
+        transition: border-color 0.2s, background 0.2s;
+      }
+      .drop.over {
+        border-color: var(--blue);
+        background: #eaf1ff;
+      }
+      .drop-icon {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 16px;
+        display: grid;
+        place-items: center;
+        background: var(--pale);
+        border-radius: 13px;
+        color: var(--blue);
+      }
+      .drop-icon svg {
+        width: 27px;
+        height: 27px;
+      }
+      .drop h2 {
+        font-size: 18px;
+        letter-spacing: -0.4px;
+        margin-bottom: 6px;
+      }
+      .drop p {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 17px;
+      }
+      .stage-placeholder {
+        color: var(--muted);
+        font-size: 12px;
+        background: #fff;
+        padding: 9px 13px;
+        border-radius: 6px;
+        max-width: 100%;
+        text-align: center;
+      }
+      .image-caption {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-top: 1px solid var(--line);
+        font-size: 10px;
+        color: var(--muted);
+        background: #fff;
+        overflow-wrap: anywhere;
+      }
+      .preview-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 55%;
+      }
+      .inspector {
+        border-left: 1px solid var(--line);
+        min-width: 0;
+      }
+      .inspector-body {
+        padding: 17px 17px 20px;
+      }
+      fieldset {
+        border: 0;
+        padding: 0;
+        margin: 0;
+        min-width: 0;
+      }
+      .inspector .field {
+        margin-bottom: 15px;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .mini-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 16px 0;
+        padding: 13px 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+      .mini-stats span {
+        display: block;
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .mini-stats strong {
+        display: block;
+        font-size: 14px;
+        margin-top: 3px;
+        letter-spacing: -0.3px;
+      }
+      .photo-hint {
+        padding: 10px 11px;
+        background: #f3f7ff;
+        border-radius: 7px;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 12px;
+      }
+      .photo-hint.warning {
+        background: #fff7e7;
+        color: #855517;
+      }
+      .photo-hint.success {
+        background: #edf8f2;
+        color: var(--green);
+      }
+      .check-wrap {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 11px;
+        margin-bottom: 13px;
+      }
+      .check-wrap input {
+        margin-top: 2px;
+      }
+      .check-wrap label {
+        font-weight: 500;
+        line-height: 1.5;
+        margin: 0;
+      }
+      .color-input {
+        width: 40px;
+        height: 32px;
+        padding: 2px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: #fff;
+      }
+      .background-control {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+      }
+      .background-control label {
+        margin: 0;
+        font-weight: 500;
+      }
+      .bottom-bar {
+        position: sticky;
+        bottom: 12px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 15px 18px;
+        margin-top: 17px;
+        box-shadow: 0 4px 18px #1c3a6610;
+      }
+      .selection-info strong {
+        display: block;
+        font-size: 12px;
+      }
+      .selection-info span {
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .progress-panel {
+        padding: 15px 18px;
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        margin-top: 14px;
+      }
+      .progress-text {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        font-size: 12px;
+        margin-bottom: 9px;
+      }
+      .track {
+        height: 5px;
+        border-radius: 4px;
+        background: #eaf0fa;
+        overflow: hidden;
+      }
+      .bar {
+        height: 100%;
+        background: var(--blue);
+        width: 0;
+        transition: width 0.2s;
+      }
+      .progress-note {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-top: 9px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .help {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 28px;
+        margin: 25px 0 8px;
+      }
+      .help h3 {
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .help p {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      details {
+        margin-top: 22px;
+        border-top: 1px solid var(--line);
+        padding-top: 15px;
+        font-size: 12px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 650;
+      }
+      details p {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.8;
+        max-width: 1000px;
+        margin-top: 9px;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 18px 0;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .footer-inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      /* Every visible dropdown is a custom listbox; the arrow has 16px right space. */
+      .select-control {
+        position: relative;
+        min-width: 0;
+      }
+      .select-trigger {
+        position: relative;
+        display: block;
+        width: 100%;
+        min-height: 40px;
+        text-align: left;
+        padding: 9px 39px 9px 11px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: #fff;
+        color: var(--ink);
+        font-size: 11px;
+        line-height: 1.6;
+      }
+      .select-value {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .select-trigger svg {
+        position: absolute;
+        width: 13px;
+        height: 13px;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+      .select-trigger[aria-expanded="true"] {
+        border-color: var(--blue);
+        outline: 3px solid #245ce71b;
+      }
+      .select-trigger[aria-expanded="true"] svg {
+        transform: translateY(-50%) rotate(180deg);
+      }
+      .select-menu {
+        position: fixed;
+        z-index: 10000;
+        background: #fff;
+        border: 1px solid var(--line);
+        padding: 5px;
+        border-radius: 8px;
+        overflow: auto;
+        overscroll-behavior: contain;
+        box-shadow: 0 8px 28px #18306024;
+        scrollbar-width: thin;
+      }
+      .select-option {
+        padding: 9px 29px 9px 10px;
+        font-size: 11px;
+        min-height: 37px;
+        position: relative;
+        border-radius: 5px;
+        cursor: pointer;
+        overflow-wrap: anywhere;
+      }
+      .select-option[aria-selected="true"] {
+        color: var(--blue);
+        font-weight: 650;
+      }
+      .select-option[aria-selected="true"]:after {
+        content: "✓";
+        position: absolute;
+        right: 10px;
+        top: 9px;
+      }
+      .select-option.is-active,
+      .select-option:hover {
+        background: var(--pale);
+      }
+
+      @media (hover: hover) {
+        .button:not(:disabled):hover {
+          transform: translateY(-2px);
+        }
+        .button.primary:not(:disabled):hover {
+          background: var(--dark);
+        }
+        .icon-btn:not(:disabled):hover {
+          background: var(--pale);
+          color: var(--blue);
+        }
+        .photo-row:hover {
+          background: #f7f9ff;
+        }
+        .drop:hover {
+          border-color: var(--blue);
+        }
+      }
+      @media (min-width: 1920px) {
+        .shell {
+          width: min(1740px, calc(100% - 100px));
+        }
+        .studio {
+          grid-template-columns: 270px minmax(0, 1fr) 310px;
+        }
+        .stage {
+          min-height: 520px;
+        }
+        .stage img {
+          max-height: 580px;
+        }
+        .queue {
+          max-height: 700px;
+        }
+      }
+      @media (min-width: 2560px) {
+        .shell {
+          width: min(2100px, calc(100% - 160px));
+        }
+        .studio {
+          grid-template-columns: 300px minmax(0, 1fr) 340px;
+        }
+        .stage {
+          min-height: 650px;
+        }
+        .stage img {
+          max-height: 720px;
+        }
+        .queue {
+          max-height: 830px;
+        }
+      }
+      @media (max-width: 1199px) {
+        .shell {
+          width: calc(100% - 36px);
+        }
+        .studio {
+          grid-template-columns: 205px minmax(0, 1fr) 250px;
+        }
+        .row-text strong {
+          max-width: 84px;
+        }
+        .inspector-body {
+          padding: 15px 13px;
+        }
+        .stage {
+          padding: 15px;
+          min-height: 360px;
+        }
+        .batch-grid {
+          grid-template-columns: 1fr 1fr 1fr;
+        }
+        .batch-grid > .button {
+          grid-column: 1/-1;
+        }
+        .row-main {
+          gap: 6px;
+        }
+        .thumb {
+          width: 36px;
+          height: 40px;
+        }
+      }
+      @media (max-width: 991px) {
+        .studio {
+          grid-template-columns: 210px minmax(0, 1fr);
+        }
+        .inspector {
+          grid-column: 1/-1;
+          border-left: 0;
+          border-top: 1px solid var(--line);
+        }
+        .inspector-body fieldset {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 15px;
+        }
+        .inspector .field {
+          margin-bottom: 0;
+        }
+        .inspector .mini-stats {
+          margin: 0;
+          padding: 0;
+          border: 0;
+        }
+        .inspector .check-wrap {
+          margin: 0;
+        }
+        .inspector .photo-hint {
+          margin: 0;
+        }
+        .background-control {
+          margin: 0;
+        }
+        .inspector-body > button {
+          margin-top: 15px;
+        }
+        .queue {
+          max-height: 470px;
+        }
+        .batch-grid {
+          grid-template-columns: 1fr 1fr 1fr auto;
+        }
+        .batch-grid > .button {
+          grid-column: auto;
+        }
+      }
+      @media (max-width: 720px) {
+        .shell {
+          width: calc(100% - 28px);
+        }
+        .nav {
+          min-height: 68px;
+        }
+        .nav-note {
+          font-size: 10px;
+          max-width: 145px;
+        }
+        .brand {
+          font-size: 22px;
+        }
+        main {
+          padding: 25px 0;
+        }
+        .intro {
+          display: block;
+          margin-bottom: 20px;
+        }
+        .intro > .button {
+          margin-top: 16px;
+        }
+        .batch {
+          padding: 15px;
+        }
+        .batch-title {
+          align-items: flex-start;
+        }
+        .batch-title p {
+          max-width: 130px;
+          text-align: right;
+          font-size: 10px;
+        }
+        .batch-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .batch-grid > .button {
+          grid-column: auto;
+          align-self: end;
+        }
+        .studio {
+          display: flex;
+          flex-direction: column;
+        }
+        .library {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .library-tools {
+          padding: 8px 13px;
+        }
+        .section-head {
+          padding: 13px 14px;
+          min-height: 48px;
+        }
+        .queue {
+          display: flex;
+          gap: 6px;
+          max-height: none;
+          overflow: auto;
+          padding: 9px;
+          scroll-snap-type: x proximity;
+        }
+        .photo-row {
+          flex-shrink: 0;
+          width: 184px;
+          margin: 0;
+          scroll-snap-align: start;
+        }
+        .row-text strong {
+          max-width: 86px;
+        }
+        .row-text span {
+          font-size: 9px;
+        }
+        .library-empty {
+          padding: 17px;
+          margin: auto;
+        }
+        .library-bottom {
+          display: none;
+        }
+        .workspace-head {
+          min-height: 50px;
+          padding: 8px 11px;
+        }
+        .stage {
+          min-height: 300px;
+          padding: 15px;
+        }
+        .stage img {
+          max-height: 380px;
+        }
+        .drop {
+          inset: 12px;
+          padding: 20px;
+        }
+        .drop h2 {
+          font-size: 17px;
+        }
+        .drop p {
+          font-size: 11px;
+        }
+        .inspector-body fieldset {
+          grid-template-columns: 1fr 1fr;
+          gap: 15px;
+        }
+        .inspector .photo-hint {
+          grid-column: 1/-1;
+        }
+        .bottom-bar {
+          bottom: 8px;
+          padding: 12px;
+          flex-wrap: wrap;
+          gap: 11px;
+        }
+        .selection-info {
+          width: 100%;
+        }
+        .selection-info strong,
+        .selection-info span {
+          display: inline;
+          margin-right: 8px;
+        }
+        .actions.main-actions {
+          width: 100%;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        .actions.main-actions .button {
+          font-size: 11px;
+          padding-inline: 8px;
+        }
+        .help {
+          grid-template-columns: 1fr;
+          gap: 15px;
+          margin-top: 23px;
+        }
+        .crop-content {
+          padding: 13px;
+        }
+        .crop-values {
+          gap: 8px;
+          grid-template-columns: 1fr 1fr;
+        }
+        .crop-foot {
+          padding: 13px;
+          flex-wrap: wrap;
+        }
+        .crop-foot .actions {
+          margin-left: auto;
+        }
+        .crop-toolbar {
+          gap: 8px;
+        }
+        .crop-toolbar .field {
+          width: 140px;
+        }
+        .crop-toolbar .button {
+          padding-inline: 10px;
+          font-size: 11px;
+        }
+      }
+      @media (max-width: 380px) {
+        .batch-grid {
+          grid-template-columns: 1fr;
+        }
+        .batch-title p {
+          display: none;
+        }
+        .inspector-body fieldset {
+          grid-template-columns: 1fr;
+        }
+        .inspector .photo-hint {
+          grid-column: auto;
+        }
+        .stage {
+          min-height: 280px;
+        }
+        .stage img {
+          max-height: 300px;
+        }
+        .main-actions .button svg {
+          display: none;
+        }
+        .crop-foot .actions {
+          width: 100%;
+        }
+        .crop-foot .actions .button {
+          flex: 1;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          transition: none !important;
+          animation: none !important;
+          scroll-behavior: auto !important;
+        }
+      }
+
+      /* Inline crop: dark outside, blue rule-of-thirds grid and eight draggable handles. */
+      .stage.crop-editing {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        background: #11151d;
+        min-height: 360px;
+      }
+      .inline-crop-surface {
+        display: grid;
+        place-items: center;
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
+      }
+      #cropCanvas {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        cursor: default;
+        outline-offset: 0;
+      }
+      .inline-crop-controls {
+        padding: 14px 16px;
+        border-top: 1px solid var(--line);
+        background: #fff;
+      }
+      .inline-crop-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .inline-crop-toolbar strong {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .inline-crop-toolbar p {
+        font-size: 10px;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+      .inline-crop-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .inline-crop-actions .button {
+        min-height: 34px;
+        padding: 6px 10px;
+        font-size: 10px;
+      }
+      .inline-crop-summary {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .crop-coordinates {
+        padding-top: 10px;
+        margin-top: 10px;
+        border-top: 1px solid var(--line);
+      }
+      .crop-coordinates summary {
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .crop-values {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .crop-values input {
+        height: 34px;
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+      .crop-values label {
+        font-size: 10px;
+      }
+      #cropTop[aria-pressed="true"] {
+        background: var(--pale);
+        color: var(--blue);
+      }
+      @media (min-width: 1920px) {
+        .stage.crop-editing {
+          min-height: 520px;
+        }
+      }
+      @media (max-width: 720px) {
+        .stage.crop-editing {
+          min-height: 280px;
+          padding: 6px;
+        }
+        .inline-crop-controls {
+          padding: 12px;
+        }
+        .inline-crop-toolbar {
+          align-items: flex-start;
+        }
+        .inline-crop-toolbar p {
+          max-width: 170px;
+        }
+        .inline-crop-summary {
+          font-size: 9px;
+        }
+        .crop-values {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 380px) {
+        .inline-crop-toolbar {
+          flex-wrap: wrap;
+        }
+        .inline-crop-actions {
+          margin-left: auto;
+        }
+      }
+
+      .crop-viewport {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        touch-action: none;
+        background: #11151d;
+        isolation: isolate;
+      }
+      #detailCanvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+      #cropViewport #cropCanvas {
+        position: absolute;
+        inset: 0;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        z-index: 1;
+        transform: none;
+        transform-origin: 0 0;
+      }
+      .zoom-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+      .zoom-button,
+      .zoom-text {
+        min-height: 32px;
+        background: #f3f6fb;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        font-size: 10px;
+        padding: 5px 8px;
+        white-space: nowrap;
+      }
+      .zoom-button {
+        width: 32px;
+        font-size: 19px;
+        line-height: 1;
+      }
+      .zoom-text.active {
+        background: var(--pale);
+        color: var(--blue);
+        border-color: #b4c9f7;
+      }
+      #zoomLevel {
+        min-width: 46px;
+        text-align: center;
+        font-size: 10px;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .zoom-hint {
+        font-size: 10px;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-top: 8px;
+      }
+
+      @media (hover: hover) {
+        .zoom-button:not(:disabled):hover,
+        .zoom-text:not(:disabled):hover {
+          background: var(--pale);
+          color: var(--blue);
+        }
+      }
+      @media (max-width: 720px) {
+        .zoom-toolbar {
+          gap: 4px;
+        }
+        .zoom-button {
+          min-height: 36px;
+          width: 36px;
+        }
+        .zoom-text {
+          min-height: 36px;
+          font-size: 10px;
+        }
+        .zoom-hint {
+          font-size: 9px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      style="display: none"
+      aria-hidden="true"
+    >
+      <symbol id="image" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <circle cx="8" cy="8" r="1.5" />
+        <path d="m3 17 6-6 4 4 3-3 5 5" />
+      </symbol>
+      <symbol id="upload" viewBox="0 0 24 24">
+        <path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6" />
+      </symbol>
+      <symbol id="download" viewBox="0 0 24 24">
+        <path d="M12 3v13m-5-5 5 5 5-5M4 16v5h16v-5" />
+      </symbol>
+      <symbol id="plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M6 18 18 6" />
+      </symbol>
+      <symbol id="crop" viewBox="0 0 24 24">
+        <path d="M6 3v15h15M3 6h15v15" />
+      </symbol>
+      <symbol id="rotate" viewBox="0 0 24 24">
+        <path d="M4 10a8 8 0 1 1 1 7M4 4v6h6" />
+      </symbol>
+      <symbol id="shield" viewBox="0 0 24 24">
+        <path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z" />
+        <path d="m8 12 3 3 5-6" />
+      </symbol>
+      <symbol id="sliders" viewBox="0 0 24 24">
+        <path d="M4 7h7m4 0h5M4 17h3m4 0h9" />
+        <circle cx="13" cy="7" r="2" />
+        <circle cx="9" cy="17" r="2" />
+      </symbol>
+      <symbol id="arrow" viewBox="0 0 24 24">
+        <path d="M4 12h16m-6-6 6 6-6 6" />
+      </symbol>
+    </svg>
+    <header>
+      <div class="shell nav">
+        <div class="brand">
+          <span
+            ><svg aria-hidden="true"><use href="#image" /></svg
+          ></span>
+          <div>frame<em>.</em></div>
+        </div>
+        <div class="nav-note">
+          <svg aria-hidden="true"><use href="#shield" /></svg
+          ><span>Photo Studio · Diproses di perangkatmu</span>
+        </div>
+      </div>
+    </header>
+    <main class="shell">
+      <div class="intro">
+        <div>
+          <p class="eyebrow">PHOTO COMPRESSOR & CONVERTER</p>
+          <h1>Atur ukuran. Rapikan setiap foto.</h1>
+          <p>
+            Target ukuran dalam KB/MB. Satu foto atau satu kelompok, dalam satu
+            ruang kerja.
+          </p>
+        </div>
+        <button type="button" class="button outline" id="addTop">
+          <svg aria-hidden="true"><use href="#plus" /></svg>Tambah foto
+        </button>
+      </div>
+      <div class="message" id="message" role="alert" hidden></div>
+      <section class="batch" aria-labelledby="batchHeading">
+        <div class="batch-title">
+          <h2 id="batchHeading">
+            <svg aria-hidden="true"><use href="#sliders" /></svg>Pengaturan
+            kelompok
+          </h2>
+          <p>Diterapkan ke foto yang dicentang</p>
+        </div>
+        <fieldset id="batchFields">
+          <div class="batch-grid">
+            <div>
+              <label for="batchTarget">Target per foto</label>
+              <div class="target">
+                <input
+                  id="batchTarget"
+                  type="number"
+                  value="150"
+                  min="0.001"
+                  step="any"
+                  inputmode="decimal"
+                /><select id="batchUnit" aria-label="Satuan target kelompok">
+                  <option value="1000">KB</option>
+                  <option value="1000000">MB</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label for="batchFormat">Format hasil</label
+              ><select id="batchFormat">
+                <option value="image/webp">WebP · efisien untuk web</option>
+                <option value="image/jpeg">JPG · kompatibel</option>
+                <option value="image/png">PNG · transparan</option>
+              </select>
+            </div>
+            <div>
+              <label for="batchEdge">Sisi terpanjang</label
+              ><select id="batchEdge">
+                <option value="0">Ikuti ukuran asli</option>
+                <option value="3840">Maks. 3840 px</option>
+                <option value="2560">Maks. 2560 px</option>
+                <option value="1920">Maks. 1920 px</option>
+                <option value="1280">Maks. 1280 px</option>
+                <option value="800">Maks. 800 px</option>
+              </select>
+            </div>
+            <button class="button soft" id="applyBatch" type="button">
+              Terapkan ke pilihan
+              <svg aria-hidden="true"><use href="#arrow" /></svg>
+            </button>
+          </div>
+        </fieldset>
+        <p class="note batch-note">
+          Contoh: pilih 5 foto → target 150 KB → Terapkan. Target tiap foto
+          tetap bisa diubah di panel kanan.
+        </p>
+      </section>
+      <input
+        type="file"
+        id="fileInput"
+        multiple
+        accept="image/*,.heic,.heif,.tif,.tiff,.psd,.dng,.cr2,.cr3,.nef,.arw,.raf,.rw2,.orf,.pef,.srw,.raw"
+        hidden
+      />
+      <section class="studio" aria-label="Editor foto">
+        <aside class="library">
+          <div class="section-head">
+            <h2>Foto <span class="count" id="fileCount">0</span></h2>
+            <button
+              class="icon-btn"
+              id="addSide"
+              type="button"
+              aria-label="Tambah foto"
+            >
+              <svg aria-hidden="true"><use href="#plus" /></svg>
+            </button>
+          </div>
+          <div class="library-tools">
+            <label class="check-label"
+              ><input type="checkbox" id="selectAll" />Pilih semua</label
+            ><button
+              class="text-btn"
+              id="removeSelected"
+              type="button"
+              disabled
+            >
+              Hapus pilihan
+            </button>
+          </div>
+          <div class="queue" id="queue">
+            <p class="library-empty" id="queueEmpty">
+              Foto yang diunggah akan muncul di sini.
+            </p>
+          </div>
+          <div class="library-bottom">
+            <p class="note">
+              Centang untuk pengaturan kelompok, kompresi, dan download. Klik
+              foto untuk mengedit.
+            </p>
+          </div>
+        </aside>
+        <div class="workspace">
+          <div class="workspace-head">
+            <div class="preview-tabs" role="group" aria-label="Mode preview">
+              <button
+                class="tab active"
+                id="tabOriginal"
+                type="button"
+                aria-pressed="true"
+              >
+                Asli / crop</button
+              ><button
+                class="tab"
+                id="tabResult"
+                type="button"
+                aria-pressed="false"
+                disabled
+              >
+                Hasil
+              </button>
+            </div>
+            <div class="workspace-tools">
+              <button
+                type="button"
+                class="icon-btn"
+                id="cropTop"
+                aria-label="Crop dan rotasi foto"
+                disabled
+              >
+                <svg aria-hidden="true"><use href="#crop" /></svg></button
+              ><button
+                type="button"
+                class="icon-btn"
+                id="downloadOne"
+                aria-label="Download foto aktif"
+                disabled
+              >
+                <svg aria-hidden="true"><use href="#download" /></svg>
+              </button>
+            </div>
+          </div>
+          <div class="stage" id="stage">
+            <img id="preview" alt="Preview foto aktif" hidden />
+            <div id="cropSurface" class="inline-crop-surface" hidden>
+              <div id="cropViewport" class="crop-viewport">
+                <canvas id="detailCanvas" aria-hidden="true"></canvas
+                ><canvas
+                  id="cropCanvas"
+                  tabindex="0"
+                  aria-label="Geser handle crop langsung pada gambar"
+                ></canvas>
+              </div>
+            </div>
+            <div class="stage-placeholder" id="previewPlaceholder" hidden></div>
+            <div class="drop" id="dropZone">
+              <div>
+                <div class="drop-icon">
+                  <svg aria-hidden="true"><use href="#upload" /></svg>
+                </div>
+                <h2>Tarik foto ke sini</h2>
+                <p>Pilih beberapa foto sekaligus, termasuk RAW kamera.</p>
+                <button class="button primary" id="chooseFiles" type="button">
+                  Pilih foto <svg aria-hidden="true"><use href="#plus" /></svg>
+                </button>
+                <p class="note" style="margin: 13px 0 0">
+                  JPG, PNG, WebP, HEIC, TIFF, DNG, CR2 & lainnya
+                </p>
+              </div>
+            </div>
+          </div>
+          <div id="inlineCropControls" class="inline-crop-controls" hidden>
+            <div class="inline-crop-toolbar">
+              <div>
+                <strong>Crop langsung di canvas</strong>
+                <p id="cropSaved">Geser handle atau pindahkan kotak crop.</p>
+              </div>
+              <div class="inline-crop-actions">
+                <button type="button" class="button primary" id="applyCrop">
+                  Terapkan (Enter)</button
+                ><button type="button" class="button outline" id="rotateCrop">
+                  <svg aria-hidden="true"><use href="#rotate" /></svg
+                  >90°</button
+                ><button type="button" class="button outline" id="resetCrop">
+                  Reset crop
+                </button>
+              </div>
+            </div>
+            <div
+              class="zoom-toolbar"
+              role="group"
+              aria-label="Zoom dan navigasi canvas"
+            >
+              <button
+                class="zoom-button"
+                id="zoomOut"
+                type="button"
+                aria-label="Zoom out"
+              >
+                −</button
+              ><output id="zoomLevel" aria-live="off">100%</output
+              ><button
+                class="zoom-button"
+                id="zoomIn"
+                type="button"
+                aria-label="Zoom in"
+              >
+                +</button
+              ><button class="zoom-text" id="zoomFit" type="button">
+                Pas layar</button
+              ><button
+                class="zoom-text"
+                id="zoomPixel"
+                type="button"
+                title="Satu piksel foto sama dengan satu piksel layar"
+              >
+                1:1</button
+              ><button class="zoom-text" id="zoomPixels" type="button">
+                400%</button
+              ><button
+                class="zoom-text active"
+                id="pixelGrid"
+                type="button"
+                aria-pressed="true"
+              >
+                Grid piksel</button
+              ><button
+                class="zoom-text"
+                id="panMode"
+                type="button"
+                aria-pressed="false"
+              >
+                Geser tampilan
+              </button>
+            </div>
+            <p class="zoom-hint">
+              Cubit untuk zoom · Geser 2 jari / scroll untuk pan · Grid piksel
+              mulai 200% · Enter menerapkan crop
+            </p>
+            <div class="inline-crop-summary">
+              <span id="cropSize"></span
+              ><span>8 handle · Enter untuk terapkan</span>
+            </div>
+            <details class="crop-coordinates">
+              <summary>Posisi & ukuran dalam piksel</summary>
+              <div class="crop-values">
+                <div>
+                  <label for="cropX">X</label
+                  ><input id="cropX" type="number" min="0" step="1" />
+                </div>
+                <div>
+                  <label for="cropY">Y</label
+                  ><input id="cropY" type="number" min="0" step="1" />
+                </div>
+                <div>
+                  <label for="cropW">Lebar</label
+                  ><input id="cropW" type="number" min="1" step="1" />
+                </div>
+                <div>
+                  <label for="cropH">Tinggi</label
+                  ><input id="cropH" type="number" min="1" step="1" />
+                </div>
+              </div>
+              <p class="note">
+                Keyboard: panah untuk geser, Shift untuk 10 px, Alt + panah
+                untuk resize.
+              </p>
+            </details>
+          </div>
+          <div class="image-caption">
+            <span id="previewName" class="preview-name">Belum ada foto</span
+            ><span id="previewMeta">Preview lokal</span>
+          </div>
+        </div>
+        <aside class="inspector">
+          <div class="section-head">
+            <h2>Pengaturan foto aktif</h2>
+            <span class="count" id="activeBadge">—</span>
+          </div>
+          <div class="inspector-body">
+            <fieldset id="itemFields" disabled>
+              <div class="field">
+                <label for="itemTarget">Target ukuran foto ini</label>
+                <div class="target">
+                  <input
+                    id="itemTarget"
+                    type="number"
+                    min="0.001"
+                    step="any"
+                    inputmode="decimal"
+                    value="150"
+                  /><select id="itemUnit" aria-label="Satuan target foto aktif">
+                    <option value="1000">KB</option>
+                    <option value="1000000">MB</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="itemFormat">Format hasil</label
+                ><select id="itemFormat">
+                  <option value="image/webp">WebP</option>
+                  <option value="image/jpeg">JPG / JPEG</option>
+                  <option value="image/png">PNG</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="itemEdge">Sisi terpanjang</label
+                ><select id="itemEdge">
+                  <option value="0">Ikuti ukuran asli</option>
+                  <option value="3840">Maks. 3840 px</option>
+                  <option value="2560">Maks. 2560 px</option>
+                  <option value="1920">Maks. 1920 px</option>
+                  <option value="1280">Maks. 1280 px</option>
+                  <option value="800">Maks. 800 px</option>
+                </select>
+              </div>
+              <div class="check-wrap">
+                <input id="allowResize" type="checkbox" checked /><label
+                  for="allowResize"
+                  >Izinkan dimensi turun otomatis agar target tercapai.</label
+                >
+              </div>
+              <div class="background-control">
+                <label for="jpegBackground">Latar transparan → JPG</label
+                ><input
+                  class="color-input"
+                  id="jpegBackground"
+                  type="color"
+                  value="#ffffff"
+                />
+              </div>
+              <div class="mini-stats">
+                <div>
+                  <span>Ukuran asli</span><strong id="originalSize">—</strong>
+                </div>
+                <div>
+                  <span>Ukuran hasil</span><strong id="resultSize">—</strong>
+                </div>
+                <div>
+                  <span>Dimensi asli</span
+                  ><strong id="originalDimensions">—</strong>
+                </div>
+                <div>
+                  <span>Dimensi hasil</span
+                  ><strong id="resultDimensions">—</strong>
+                </div>
+              </div>
+              <button type="button" class="button outline wide" id="cropButton">
+                <svg aria-hidden="true"><use href="#crop" /></svg>Atur crop di
+                canvas
+              </button>
+              <div class="photo-hint" id="itemHint">
+                Pilih foto untuk mengatur hasil.
+              </div>
+            </fieldset>
+          </div>
+        </aside>
+      </section>
+      <div class="progress-panel" id="progressPanel" hidden>
+        <div class="progress-text">
+          <span id="progressLabel" role="status" aria-live="polite"
+            >Menyiapkan…</span
+          ><strong id="progressPercent">0%</strong>
+        </div>
+        <div
+          class="track"
+          role="progressbar"
+          id="progressTrack"
+          aria-label="Progres pemrosesan"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <div class="bar" id="progressBar"></div>
+        </div>
+        <div class="progress-note">
+          <span id="progressNote"
+            >Foto diproses bergantian untuk menghemat memori.</span
+          ><button type="button" id="cancelJob" class="text-btn">
+            Batalkan
+          </button>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <div class="selection-info">
+          <strong id="selectionCount">0 foto dipilih</strong
+          ><span id="selectionReady">Belum ada hasil</span>
+        </div>
+        <div class="actions main-actions">
+          <button
+            type="button"
+            class="button primary"
+            id="compressSelected"
+            disabled
+          >
+            Kompres pilihan
+            <svg aria-hidden="true"><use href="#arrow" /></svg></button
+          ><button
+            type="button"
+            class="button outline"
+            id="downloadSelected"
+            disabled
+          >
+            <svg aria-hidden="true"><use href="#download" /></svg>Download
+            pilihan
+          </button>
+        </div>
+      </div>
+      <p
+        class="note"
+        id="downloadStatus"
+        role="status"
+        aria-live="polite"
+        style="margin-top: 10px"
+      ></p>
+      <a id="downloadAgain" class="text-btn" hidden>Download ulang</a>
+      <div class="help">
+        <div>
+          <h3>Target angka, bukan persentase</h3>
+          <p>
+            150 KB untuk satu kelompok, 500 KB untuk foto lain. Ukuran hasil
+            selalu ditampilkan.
+          </p>
+        </div>
+        <div>
+          <h3>Edit sebelum kompresi</h3>
+          <p>
+            Geser delapan handle crop langsung di canvas, rotasi, serta pilihan
+            dimensi. File asli tidak ditimpa.
+          </p>
+        </div>
+        <div>
+          <h3>Download kelompok langsung</h3>
+          <p>
+            Centang hasil yang diinginkan, lalu download semua sebagai file
+            gambar terpisah. Tanpa ZIP dan tanpa membuat folder.
+          </p>
+        </div>
+      </div>
+      <details>
+        <summary>Format, kualitas, dan batasan yang perlu diketahui</summary>
+        <p>
+          JPG, PNG, dan WebP diproses dengan encoder browser. PNG tidak
+          mempunyai kontrol kualitas lossy; target kecil mungkin memerlukan
+          dimensi lebih kecil. Target diperlakukan sebagai batas ukuran, bukan
+          janji byte persis. Jika target tidak tercapai, hasil diberi status
+          Melebihi target. Konversi RAW kamera, HEIC, TIFF, dan PSD menggunakan
+          ImageMagick WebAssembly yang dimuat dari CDN hanya saat diperlukan
+          (sekitar 15 MB); dukungan tetap bergantung pada model kamera/codec.
+          RAW diekspor sebagai gambar raster, bukan file RAW baru. File
+          beranimasi atau berlapis diekspor menjadi satu gambar datar. Foto
+          diproses lokal dan metadata tidak dipertahankan; warna dapat berbeda
+          dari aplikasi RAW profesional. Pengurangan ekstrem, misalnya 30 MB
+          menjadi 150 KB, bisa mengurangi dimensi dan detail. Jalankan melalui
+          HTTPS atau localhost. Download kelompok mengirim unduhan gambar satu
+          per satu secara otomatis. Browser mungkin meminta izin multiple
+          downloads; aktifkan izin itu agar semua file dapat diterima. Lokasi
+          file mengikuti pengaturan Downloads browser. Aplikasi tidak dapat
+          memastikan setiap file selesai disimpan oleh browser. Tidak memakai
+          database. Proses batch dilakukan bergantian untuk mengurangi
+          penggunaan RAM.
+        </p>
+      </details>
+    </main>
+    <footer>
+      <div class="shell footer-inner">
+        <span>frame. — Photo Studio</span
+        ><span>HTML + CSS + JavaScript · Privasi di perangkatmu</span>
+      </div>
+    </footer>
+
+    <script>
+      "use strict";
+      /* Shared image engine: used in a dedicated Worker, with a main-thread fallback.
+   Quality is searched within [0.42, 0.94]; dimensions may shrink if permitted.
+   No result is falsely marked under target. PNG always uses its lossless encoder. */
+      async function compressRaster(source, options, env) {
+        const bitmap = await env.decode(source);
+        let canvas;
+        try {
+          const angle = (((options.rotation || 0) % 360) + 360) % 360;
+          const rw = angle % 180 ? bitmap.height : bitmap.width;
+          const rh = angle % 180 ? bitmap.width : bitmap.height;
+          const rect = options.crop || { x: 0, y: 0, w: 1, h: 1 };
+          const sx = Math.max(0, Math.min(rw - 1, rect.x * rw)),
+            sy = Math.max(0, Math.min(rh - 1, rect.y * rh));
+          const sw = Math.max(1, Math.min(rw - sx, rect.w * rw)),
+            sh = Math.max(1, Math.min(rh - sy, rect.h * rh));
+          const maxEdge = options.maxEdge || Math.max(sw, sh);
+          let factor = Math.min(1, maxEdge / Math.max(sw, sh));
+          if (
+            sw * sh * factor * factor > 12000000 ||
+            Math.max(sw, sh) * factor > 8192
+          ) {
+            if (options.allowResize)
+              factor = Math.min(
+                factor,
+                Math.sqrt(12000000 / (sw * sh)),
+                8192 / Math.max(sw, sh)
+              );
+            else
+              throw Error(
+                "Dimensi hasil terlalu besar. Pilih sisi terpanjang 3840 px atau izinkan dimensi turun otomatis."
+              );
+          }
+          const target = options.target;
+          if (!Number.isFinite(target) || target < 1000)
+            throw Error("Target minimal 1 KB.");
+          let best = null,
+            closest = null,
+            count = 0;
+          function keep(blob, w, h, q) {
+            const result = {
+              blob,
+              width: w,
+              height: h,
+              quality: q,
+              metTarget: blob.size <= target,
+            };
+            if (!closest || blob.size < closest.blob.size) closest = result;
+            if (
+              blob.size <= target &&
+              (!best ||
+                blob.size > best.blob.size ||
+                w * h > best.width * best.height)
+            )
+              best = result;
+            return result;
+          }
+          for (let round = 0; round < 9; round++) {
+            env.check();
+            const w = Math.max(1, Math.round(sw * factor)),
+              h = Math.max(1, Math.round(sh * factor));
+            canvas = env.canvas(w, h);
+            const ctx = canvas.getContext("2d");
+            if (!ctx) throw Error("Canvas 2D tidak tersedia.");
+            if (options.format === "image/jpeg") {
+              ctx.fillStyle = options.background || "#ffffff";
+              ctx.fillRect(0, 0, w, h);
+            }
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+            ctx.save();
+            ctx.scale(w / sw, h / sh);
+            ctx.translate(-sx, -sy);
+            if (angle === 90) {
+              ctx.translate(bitmap.height, 0);
+              ctx.rotate(Math.PI / 2);
+            }
+            if (angle === 180) {
+              ctx.translate(bitmap.width, bitmap.height);
+              ctx.rotate(Math.PI);
+            }
+            if (angle === 270) {
+              ctx.translate(0, bitmap.width);
+              ctx.rotate(-Math.PI / 2);
+            }
+            ctx.drawImage(bitmap, 0, 0);
+            ctx.restore();
+            const encode = async (q) => {
+              env.check();
+              const blob = await env.encode(canvas, options.format, q);
+              env.check();
+              if (!blob || !blob.size)
+                throw Error("Encoder tidak menghasilkan gambar.");
+              if (blob.type !== options.format)
+                throw Error(
+                  "Browser tidak mendukung ekspor " +
+                    options.format +
+                    ". Pilih JPG atau PNG."
+                );
+              env.notify({ attempt: ++count, width: w, height: h, round });
+              return keep(blob, w, h, q);
+            };
+            let small;
+            if (options.format === "image/png") {
+              small = await encode(1);
+              if (small.metTarget) return { ...small, attempts: count };
+            } else {
+              const high = await encode(0.94);
+              if (high.metTarget) return { ...high, attempts: count };
+              small = await encode(0.42);
+              if (small.metTarget) {
+                let low = 0.42,
+                  hi = 0.94,
+                  fit = small;
+                for (let i = 0; i < 7; i++) {
+                  const q = (low + hi) / 2,
+                    result = await encode(q);
+                  if (result.metTarget) {
+                    low = q;
+                    fit = result;
+                  } else hi = q;
+                }
+                return { ...fit, attempts: count };
+              }
+            }
+            canvas.width = 1;
+            canvas.height = 1;
+            canvas = null;
+            if (!options.allowResize || (w <= 16 && h <= 16)) break;
+            factor *= Math.max(
+              0.18,
+              Math.min(0.88, Math.sqrt(target / small.blob.size) * 0.91)
+            );
+            await env.yield();
+          }
+          return { ...(best || closest), attempts: count };
+        } finally {
+          bitmap.close?.();
+          if (canvas) {
+            canvas.width = 1;
+            canvas.height = 1;
+          }
+        }
+      }
+    </script>
+    <script id="decoderWorker" type="text/plain">
+      let modulePromise;
+      self.onmessage = async ({data}) => {
+        try {
+          if(!modulePromise)modulePromise=(async()=>{
+            const M=await import('https://cdn.jsdelivr.net/npm/@imagemagick/magick-wasm@0.0.46/dist/index.js');
+            const response=await fetch('https://cdn.jsdelivr.net/npm/@imagemagick/magick-wasm@0.0.46/dist/x86/magick.wasm');
+            if(!response.ok)throw Error('Gagal memuat decoder (HTTP '+response.status+').');
+            await M.initializeImageMagick(new Uint8Array(await response.arrayBuffer()));return M;
+          })();
+          const M=await modulePromise;
+          const bytes=new Uint8Array(await data.file.arrayBuffer());
+          const result=M.ImageMagick.read(bytes,image=>{
+            image.autoOrient();image.strip();
+            if(image.width*image.height>80000000)throw Error('Gambar di atas 80 megapiksel terlalu besar untuk decoder ini.');
+            return image.write(M.MagickFormat.Png,output=>new Uint8Array(output));
+          });
+          self.postMessage({id:data.id,buffer:result.buffer},[result.buffer]);
+        }catch(err){self.postMessage({id:data.id,error:String(err?.message||err)});}
+      };
+    </script>
+    <script>
+      (() => {
+        "use strict";
+        const $ = (id) => document.getElementById(id);
+        const icons = {
+          close: '<svg aria-hidden="true"><use href="#close"/></svg>',
+        };
+        const items = [];
+        let activeId = null,
+          nextId = 1,
+          busy = false,
+          jobId = 0,
+          jobController = null,
+          currentWorker = null,
+          currentReject = null;
+        let decoder = null,
+          decoderURL = "",
+          decodeSeq = 0,
+          decoderPending = new Map();
+        let previewURL = "",
+          previewVersion = 0,
+          tab = "original",
+          downloadURL = "",
+          cropState = null,
+          dragState = null,
+          cropLoadId = 0;
+        const formats = {
+          "image/webp": "webp",
+          "image/jpeg": "jpg",
+          "image/png": "png",
+        };
+        const size = (n) =>
+          n >= 1000000
+            ? (n / 1000000).toLocaleString("id-ID", {
+                maximumFractionDigits: 2,
+              }) + " MB"
+            : (n / 1000).toLocaleString("id-ID", { maximumFractionDigits: 1 }) +
+              " KB";
+        const pause = () => new Promise((r) => setTimeout(r, 0));
+        const active = () => items.find((i) => i.id === activeId);
+        const selected = () => items.filter((i) => i.selected);
+        function say(text = "") {
+          $("message").textContent = text;
+          $("message").hidden = !text;
+        }
+        function settings() {
+          return {
+            target:
+              Number($("batchTarget").value) * Number($("batchUnit").value),
+            unit: $("batchUnit").value,
+            format: $("batchFormat").value,
+            maxEdge: Number($("batchEdge").value),
+            allowResize: true,
+            background: "#ffffff",
+            rotation: 0,
+            crop: null,
+          };
+        }
+        function validTarget(n) {
+          return Number.isFinite(n) && n >= 1000 && n <= 1000000000;
+        }
+        function clearResult(item) {
+          if (item.outputURL) URL.revokeObjectURL(item.outputURL);
+          item.result = null;
+          item.outputURL = "";
+          item.status = item.source ? "ready" : "error";
+          item.error = "";
+        }
+        function dirty(item) {
+          clearResult(item);
+          if (item.id === activeId) tab = "original";
+        }
+        function escapeHTML(text) {
+          return String(text).replace(
+            /[&<>"']/g,
+            (c) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;",
+              }[c])
+          );
+        }
+        function rowStatus(item) {
+          if (item.status === "processing") return "Sedang diproses…";
+          if (item.status === "loading") return "Membaca foto…";
+          if (item.status === "error") return "Gagal membaca / memproses";
+          if (item.result)
+            return (
+              size(item.result.blob.size) +
+              (item.result.metTarget ? " · Selesai" : " · Melebihi target")
+            );
+          return "Target " + size(item.target);
+        }
+        function renderQueue() {
+          const q = $("queue");
+          q.replaceChildren();
+          if (!items.length) {
+            const p = document.createElement("p");
+            p.className = "library-empty";
+            p.textContent = "Foto yang diunggah akan muncul di sini.";
+            q.append(p);
+          }
+          items.forEach((item) => {
+            const row = document.createElement("div");
+            row.className =
+              "photo-row" + (item.id === activeId ? " active" : "");
+            row.dataset.id = item.id;
+            row.innerHTML =
+              '<input type="checkbox" class="item-check" aria-label="Pilih ' +
+              escapeHTML(item.file.name) +
+              '"><button class="row-main" type="button"><img class="thumb" alt=""><span class="row-text"><strong></strong><span></span></span></button><button class="icon-btn small row-remove" type="button" aria-label="Hapus ' +
+              escapeHTML(item.file.name) +
+              '">' +
+              icons.close +
+              "</button>";
+            const check = row.querySelector(".item-check");
+            check.checked = item.selected;
+            check.disabled = busy;
+            check.addEventListener("change", () => {
+              item.selected = check.checked;
+              syncControls();
+            });
+            const img = row.querySelector("img");
+            if (item.thumbURL) img.src = item.thumbURL;
+            else img.hidden = true;
+            row.querySelector("strong").textContent = item.file.name;
+            const status = row.querySelector(".row-text>span");
+            status.textContent = rowStatus(item);
+            status.className =
+              item.status === "error"
+                ? "failed"
+                : item.result
+                ? item.result.metTarget
+                  ? "done"
+                  : "warn"
+                : "";
+            row
+              .querySelector(".row-main")
+              .addEventListener("click", () => activate(item.id));
+            const remove = row.querySelector(".row-remove");
+            remove.disabled = busy;
+            remove.addEventListener("click", () => removeItems([item]));
+            q.append(row);
+          });
+          $("fileCount").textContent = items.length;
+          syncControls();
+        }
+        function syncControls() {
+          const picked = selected(),
+            ready = picked.filter((i) => i.result),
+            a = active();
+          $("selectionCount").textContent = picked.length + " foto dipilih";
+          $("selectionReady").textContent =
+            ready.length +
+            " hasil siap" +
+            (ready.length
+              ? " · " + size(ready.reduce((n, i) => n + i.result.blob.size, 0))
+              : "");
+          $("selectAll").checked =
+            !!items.length && picked.length === items.length;
+          $("selectAll").indeterminate =
+            !!picked.length && picked.length < items.length;
+          $("selectAll").disabled = busy || !items.length;
+          $("removeSelected").disabled = busy || !picked.length;
+          $("applyBatch").disabled = busy || !picked.length;
+          $("compressSelected").disabled =
+            busy || !picked.some((i) => i.source);
+          $("downloadSelected").disabled =
+            busy || !picked.length || ready.length !== picked.length;
+          $("downloadSelected").textContent =
+            picked.length > 1
+              ? "Download foto (" + picked.length + ")"
+              : "Download pilihan";
+          $("downloadOne").disabled = busy || !a?.result;
+          $("cropTop").disabled = busy || !a?.source;
+          $("itemFields").disabled = busy || !a?.source;
+          $("batchFields").disabled = busy;
+          ["addTop", "addSide", "chooseFiles"].forEach(
+            (id) => ($(id).disabled = busy)
+          );
+          $("fileInput").disabled = busy;
+          [
+            "applyCrop",
+            "rotateCrop",
+            "resetCrop",
+            "cropX",
+            "cropY",
+            "cropW",
+            "cropH",
+            "zoomIn",
+            "zoomOut",
+            "zoomFit",
+            "zoomPixel",
+            "zoomPixels",
+            "pixelGrid",
+            "panMode",
+          ].forEach((id) => ($(id).disabled = busy));
+          $("cropCanvas").setAttribute("aria-disabled", String(busy));
+          refreshSelects();
+        }
+        function syncInspector() {
+          const a = active();
+          $("activeBadge").textContent = a
+            ? items.indexOf(a) + 1 + " / " + items.length
+            : "—";
+          if (!a) {
+            [
+              "originalSize",
+              "resultSize",
+              "originalDimensions",
+              "resultDimensions",
+            ].forEach((id) => ($(id).textContent = "—"));
+            $("itemHint").textContent = "Pilih foto untuk mengatur hasil.";
+            syncControls();
+            return;
+          }
+          $("itemUnit").value = a.unit;
+          $("itemTarget").value = +(a.target / Number(a.unit)).toFixed(4);
+          $("itemFormat").value = a.format;
+          $("itemEdge").value = String(a.maxEdge);
+          $("allowResize").checked = a.allowResize;
+          $("jpegBackground").value = a.background;
+          $("originalSize").textContent = size(a.file.size);
+          $("resultSize").textContent = a.result
+            ? size(a.result.blob.size)
+            : "—";
+          $("originalDimensions").textContent = a.width
+            ? a.width + " × " + a.height
+            : "—";
+          $("resultDimensions").textContent = a.result
+            ? a.result.width + " × " + a.result.height
+            : "—";
+          const hint = $("itemHint");
+          hint.className = "photo-hint";
+          if (a.error) {
+            hint.textContent = a.error;
+            hint.classList.add("warning");
+          } else if (a.result) {
+            hint.textContent = a.result.metTarget
+              ? "Selesai · " +
+                size(a.result.blob.size) +
+                " ≤ target " +
+                size(a.target) +
+                ". Periksa preview sebelum digunakan."
+              : "Hasil melebihi target. Izinkan dimensi turun, naikkan target, atau gunakan WebP/JPG.";
+            hint.classList.add(a.result.metTarget ? "success" : "warning");
+          } else
+            hint.textContent =
+              a.format === "image/png"
+                ? "PNG mempertahankan piksel tanpa kompresi lossy. Target kecil dapat memerlukan dimensi lebih kecil."
+                : a.crop
+                ? "Crop tersimpan. Klik Kompres pilihan untuk membuat hasil baru."
+                : "Target maksimal " +
+                  size(a.target) +
+                  ". Detail dan dimensi dapat berkurang untuk mencapai target.";
+          syncControls();
+        }
+        function activate(id) {
+          finishCropDrag();
+          activeId = id;
+          tab = "original";
+          renderQueue();
+          syncInspector();
+          renderPreview();
+        }
+        async function decodeNative(blob) {
+          if (window.createImageBitmap) {
+            try {
+              return await createImageBitmap(blob, {
+                imageOrientation: "from-image",
+              });
+            } catch (_) {}
+          }
+          return new Promise((resolve, reject) => {
+            const img = new Image(),
+              url = URL.createObjectURL(blob);
+            img.onload = () => {
+              URL.revokeObjectURL(url);
+              resolve(img);
+            };
+            img.onerror = () => {
+              URL.revokeObjectURL(url);
+              reject(Error("Format tidak dapat dibaca oleh browser."));
+            };
+            img.src = url;
+          });
+        }
+        function makeCanvas(w, h) {
+          const c = document.createElement("canvas");
+          c.width = w;
+          c.height = h;
+          return c;
+        }
+        function encodeCanvas(c, type, q) {
+          return new Promise((resolve, reject) =>
+            c.toBlob(
+              (blob) =>
+                blob ? resolve(blob) : reject(Error("Gagal membuat gambar.")),
+              type,
+              q
+            )
+          );
+        }
+        function rotatedDimensions(a) {
+          return a.rotation % 180
+            ? { w: a.height, h: a.width }
+            : { w: a.width, h: a.height };
+        }
+        function drawTransformed(ctx, bmp, a, box, outW, outH) {
+          const r = rotatedDimensions(a),
+            rect = box || { x: 0, y: 0, w: 1, h: 1 };
+          ctx.save();
+          // Clip the visible output rectangle BEFORE mapping the selected source crop.
+          // A viewport canvas can be wider than the photo; without this clip, pixels
+          // outside the crop are still drawn into the surrounding viewport.
+          ctx.beginPath();
+          ctx.rect(0, 0, outW, outH);
+          ctx.clip();
+          ctx.scale(outW / (rect.w * r.w), outH / (rect.h * r.h));
+          ctx.translate(-rect.x * r.w, -rect.y * r.h);
+          if (a.rotation === 90) {
+            ctx.translate(bmp.height, 0);
+            ctx.rotate(Math.PI / 2);
+          } else if (a.rotation === 180) {
+            ctx.translate(bmp.width, bmp.height);
+            ctx.rotate(Math.PI);
+          } else if (a.rotation === 270) {
+            ctx.translate(0, bmp.width);
+            ctx.rotate(-Math.PI / 2);
+          }
+          ctx.drawImage(bmp, 0, 0);
+          ctx.restore();
+        }
+        async function renderPreview() {
+          finishCropDrag();
+          const version = ++previewVersion,
+            a = active();
+          $("dropZone").hidden = !!items.length;
+          $("tabOriginal").classList.toggle("active", tab === "original");
+          $("tabResult").classList.toggle("active", tab === "result");
+          $("tabOriginal").setAttribute(
+            "aria-pressed",
+            String(tab === "original")
+          );
+          $("tabResult").setAttribute("aria-pressed", String(tab === "result"));
+          $("tabResult").disabled = !a?.result;
+          $("cropTop").setAttribute(
+            "aria-pressed",
+            String(tab === "original" && !!a?.source)
+          );
+          if (previewURL) {
+            URL.revokeObjectURL(previewURL);
+            previewURL = "";
+          }
+          $("preview").hidden = true;
+          $("preview").removeAttribute("src");
+          $("previewPlaceholder").hidden = true;
+          const editing = tab === "original" && !!a?.source;
+          $("cropSurface").hidden = !editing;
+          $("inlineCropControls").hidden = !editing;
+          $("stage").classList.toggle("crop-editing", editing);
+          $("previewName").textContent = a ? a.file.name : "Belum ada foto";
+          $("previewMeta").textContent = a ? rowStatus(a) : "Preview lokal";
+          if (!a) {
+            releaseCrop();
+            return;
+          }
+          if (tab === "result" && a.result) {
+            releaseCrop();
+            $("preview").src = a.outputURL;
+            $("preview").hidden = false;
+            return;
+          }
+          if (!a.source) {
+            releaseCrop();
+            $("previewPlaceholder").textContent = a.error || "Membaca foto…";
+            $("previewPlaceholder").hidden = false;
+            return;
+          }
+          try {
+            await ensureInlineCrop(a, version);
+          } catch (e) {
+            if (version === previewVersion) {
+              $("previewPlaceholder").textContent = e.message;
+              $("previewPlaceholder").hidden = false;
+              $("cropSurface").hidden = true;
+              $("inlineCropControls").hidden = true;
+            }
+          }
+        }
+        function extendedDecode(file) {
+          if (!window.Worker)
+            return Promise.reject(
+              Error(
+                "Format ini memerlukan Web Worker. Gunakan browser modern melalui localhost/HTTPS."
+              )
+            );
+          if (!decoder) {
+            decoderURL = URL.createObjectURL(
+              new Blob([$("decoderWorker").textContent], {
+                type: "text/javascript",
+              })
+            );
+            decoder = new Worker(decoderURL, { type: "module" });
+            decoder.onmessage = ({ data }) => {
+              const task = decoderPending.get(data.id);
+              if (!task) return;
+              decoderPending.delete(data.id);
+              clearTimeout(task.timer);
+              data.error
+                ? task.reject(Error(data.error))
+                : task.resolve(new Blob([data.buffer], { type: "image/png" }));
+            };
+            decoder.onerror = (e) =>
+              resetDecoder(
+                Error(e.message || "Decoder gagal dimuat. Periksa koneksi CDN.")
+              );
+          }
+          return new Promise((resolve, reject) => {
+            const id = ++decodeSeq;
+            const timer = setTimeout(
+              () =>
+                resetDecoder(
+                  Error(
+                    "Decoder terlalu lama. Coba ekspor RAW/HEIC ke JPG terlebih dahulu."
+                  )
+                ),
+              120000
+            );
+            decoderPending.set(id, { resolve, reject, timer });
+            decoder.postMessage({ id, file });
+          });
+        }
+        function resetDecoder(error) {
+          decoder?.terminate();
+          decoder = null;
+          if (decoderURL) URL.revokeObjectURL(decoderURL);
+          decoderURL = "";
+          for (const p of decoderPending.values()) {
+            clearTimeout(p.timer);
+            p.reject(error);
+          }
+          decoderPending.clear();
+        }
+        async function loadItem(item) {
+          let bmp;
+          try {
+            const raw =
+              /\.(dng|cr2|cr3|nef|arw|raf|rw2|orf|pef|srw|raw|tif|tiff|psd)$/i.test(
+                item.file.name
+              );
+            if (raw) {
+              item.source = await extendedDecode(item.file);
+              item.decoded = true;
+            } else {
+              try {
+                bmp = await decodeNative(item.file);
+                item.source = item.file;
+              } catch (_) {
+                item.source = await extendedDecode(item.file);
+                item.decoded = true;
+              }
+            }
+            bmp ||= await decodeNative(item.source);
+            item.width = bmp.width || bmp.naturalWidth;
+            item.height = bmp.height || bmp.naturalHeight;
+            if (!item.width || !item.height)
+              throw Error("Dimensi foto tidak valid.");
+            const f = Math.min(1, 160 / Math.max(item.width, item.height)),
+              c = makeCanvas(
+                Math.max(1, Math.round(item.width * f)),
+                Math.max(1, Math.round(item.height * f))
+              );
+            c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+            item.thumbURL = URL.createObjectURL(
+              await encodeCanvas(c, "image/png")
+            );
+            c.width = c.height = 1;
+            item.status = "ready";
+          } catch (e) {
+            item.source = null;
+            item.status = "error";
+            item.error = "Format gagal dibaca: " + e.message;
+          } finally {
+            bmp?.close?.();
+          }
+        }
+        async function addFiles(list) {
+          if (busy || !list.length) return;
+          say();
+          const defaults = settings();
+          if (!validTarget(defaults.target))
+            return say(
+              "Masukkan target kelompok antara 1 KB dan 1000 MB terlebih dahulu."
+            );
+          const valid = Array.from(list).filter(
+            (f) =>
+              f.size > 0 &&
+              (f.type.startsWith("image/") ||
+                /\.(jpe?g|png|webp|gif|bmp|avif|heic|heif|tiff?|psd|dng|cr2|cr3|nef|arw|raf|rw2|orf|pef|srw|raw)$/i.test(
+                  f.name
+                ))
+          );
+          if (!valid.length) return say("Pilih file gambar yang valid.");
+          if (items.length + valid.length > 100)
+            return say(
+              "Maksimal 100 foto per kelompok. Hapus sebagian foto sebelum menambah lagi."
+            );
+          if (valid.some((f) => f.size > 250000000))
+            return say(
+              "Maksimal ukuran satu file adalah 250 MB untuk menjaga penggunaan memori browser."
+            );
+          setBusy(true);
+          const id = ++jobId;
+          jobController = new AbortController();
+          showProgress(0, "Membaca " + valid.length + " foto…");
+          $("cancelJob").hidden = false;
+          const incoming = valid.map((file) => ({
+            id: nextId++,
+            file,
+            ...defaults,
+            selected: true,
+            status: "loading",
+            source: null,
+            result: null,
+            outputURL: "",
+            thumbURL: "",
+            width: 0,
+            height: 0,
+            error: "",
+          }));
+          items.push(...incoming);
+          if (!activeId) activeId = incoming[0].id;
+          renderQueue();
+          syncInspector();
+          renderPreview();
+          let done = 0;
+          try {
+            for (const item of incoming) {
+              if (id !== jobId) break;
+              showProgress(
+                (done / incoming.length) * 100,
+                "Membaca " +
+                  (done + 1) +
+                  "/" +
+                  incoming.length +
+                  " · " +
+                  item.file.name
+              );
+              await loadItem(item);
+              done++;
+              if (id !== jobId) break;
+              renderQueue();
+              if (item.id === activeId) {
+                syncInspector();
+                renderPreview();
+              }
+              await pause();
+            }
+          } finally {
+            if (id === jobId) {
+              incoming
+                .filter((i) => i.status === "loading")
+                .forEach((i) => {
+                  i.status = "error";
+                  i.error = "Pembacaan dibatalkan.";
+                });
+              setBusy(false);
+              showProgress(
+                100,
+                "Selesai membaca foto · " +
+                  incoming.filter((i) => i.source).length +
+                  " siap"
+              );
+              $("cancelJob").hidden = true;
+              renderQueue();
+              syncInspector();
+              renderPreview();
+            }
+            $("fileInput").value = "";
+          }
+        }
+        function removeItems(list) {
+          if (busy) return;
+          for (const item of list) {
+            clearResult(item);
+            if (item.thumbURL) URL.revokeObjectURL(item.thumbURL);
+            const n = items.indexOf(item);
+            if (n >= 0) items.splice(n, 1);
+          }
+          if (!active()) activeId = items[0]?.id || null;
+          renderQueue();
+          syncInspector();
+          renderPreview();
+        }
+        function setBusy(value) {
+          if (value) finishCropDrag();
+          busy = value;
+          syncControls();
+        }
+        function showProgress(value, label) {
+          $("progressPanel").hidden = false;
+          $("progressLabel").textContent = label;
+          value = Math.max(0, Math.min(100, value));
+          $("progressBar").style.width = value + "%";
+          $("progressPercent").textContent = Math.floor(value) + "%";
+          $("progressTrack").setAttribute(
+            "aria-valuenow",
+            String(Math.floor(value))
+          );
+        }
+        function runEngine(item, onProgress, signal) {
+          const options = {
+            target: item.target,
+            format: item.format,
+            maxEdge: item.maxEdge,
+            allowResize: item.allowResize,
+            background: item.background,
+            rotation: item.rotation,
+            crop: item.crop,
+          };
+          if (
+            window.Worker &&
+            window.OffscreenCanvas &&
+            window.createImageBitmap
+          ) {
+            return new Promise((resolve, reject) => {
+              const code =
+                "const engine=" +
+                compressRaster.toString() +
+                `;self.onmessage=async({data})=>{try{const result=await engine(data.source,data.options,{decode:b=>createImageBitmap(b,{imageOrientation:'from-image'}),canvas:(w,h)=>new OffscreenCanvas(w,h),encode:(c,type,quality)=>c.convertToBlob({type,quality}),check:()=>{},notify:p=>self.postMessage({progress:p}),yield:()=>new Promise(r=>setTimeout(r,0))});self.postMessage({result});}catch(e){self.postMessage({error:String(e.message||e)});}};`;
+              const url = URL.createObjectURL(
+                new Blob([code], { type: "text/javascript" })
+              );
+              const worker = new Worker(url);
+              currentWorker = worker;
+              currentReject = reject;
+              let ended = false,
+                timer;
+              const cleanup = () => {
+                if (ended) return;
+                ended = true;
+                clearTimeout(timer);
+                worker.terminate();
+                URL.revokeObjectURL(url);
+                signal.removeEventListener("abort", abort);
+                if (currentWorker === worker) {
+                  currentWorker = null;
+                  currentReject = null;
+                }
+              };
+              const abort = () => {
+                cleanup();
+                reject(new DOMException("Dibatalkan", "AbortError"));
+              };
+              signal.addEventListener("abort", abort, { once: true });
+              const arm = () => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                  cleanup();
+                  reject(
+                    Error(
+                      "Encoder tidak merespons selama 90 detik. Coba dimensi lebih kecil."
+                    )
+                  );
+                }, 90000);
+              };
+              arm();
+              worker.onmessage = ({ data }) => {
+                if (data.progress) {
+                  arm();
+                  onProgress(data.progress);
+                } else if (data.result) {
+                  cleanup();
+                  resolve(data.result);
+                } else if (data.error) {
+                  cleanup();
+                  reject(Error(data.error));
+                }
+              };
+              worker.onerror = (e) => {
+                cleanup();
+                reject(Error(e.message || "Worker gagal. Coba browser lain."));
+              };
+              worker.postMessage({ source: item.source, options });
+            });
+          }
+          return compressRaster(item.source, options, {
+            decode: decodeNative,
+            canvas: makeCanvas,
+            encode: encodeCanvas,
+            check: () => signal.throwIfAborted(),
+            notify: onProgress,
+            yield: pause,
+          });
+        }
+        async function compressSelection() {
+          if (busy) return;
+          const list = selected();
+          if (!list.length) return say("Pilih minimal satu foto.");
+          if (list.some((i) => !i.source))
+            return say(
+              "Sebagian foto pilihan gagal dibaca. Hapus centangnya terlebih dahulu."
+            );
+          if (list.some((i) => !validTarget(i.target)))
+            return say("Target setiap foto minimal 1 KB dan maksimal 1000 MB.");
+          say();
+          const id = ++jobId;
+          setBusy(true);
+          jobController = new AbortController();
+          $("cancelJob").hidden = false;
+          let done = 0,
+            failed = 0;
+          try {
+            for (const item of list) {
+              if (id !== jobId) break;
+              clearResult(item);
+              item.status = "processing";
+              renderQueue();
+              showProgress(
+                (done / list.length) * 100,
+                "Mengompres " +
+                  (done + 1) +
+                  "/" +
+                  list.length +
+                  " · " +
+                  item.file.name
+              );
+              try {
+                const result = await runEngine(
+                  item,
+                  (p) => {
+                    if (id !== jobId) return;
+                    $("progressNote").textContent =
+                      p.width +
+                      " × " +
+                      p.height +
+                      " px · Optimasi " +
+                      p.attempt +
+                      " · " +
+                      item.file.name;
+                  },
+                  jobController.signal
+                );
+                if (id !== jobId) break;
+                item.result = result;
+                item.outputURL = URL.createObjectURL(result.blob);
+                item.status = "done";
+              } catch (e) {
+                if (id !== jobId || e.name === "AbortError") break;
+                item.status = "error";
+                item.error = e.message;
+                failed++;
+              }
+              done++;
+              renderQueue();
+              syncInspector();
+              if (item.id === activeId) {
+                tab = item.result ? "result" : "original";
+                renderPreview();
+              }
+              showProgress(
+                (done / list.length) * 100,
+                done + "/" + list.length + " foto selesai"
+              );
+              await pause();
+            }
+          } finally {
+            if (id === jobId) {
+              setBusy(false);
+              $("cancelJob").hidden = true;
+              showProgress(
+                100,
+                "Selesai · " + (done - failed) + " hasil, " + failed + " gagal"
+              );
+              $("progressNote").textContent =
+                "Pilih hasil yang siap, lalu download. Ukuran hasil aktual ditampilkan per foto.";
+              renderQueue();
+              syncInspector();
+            }
+          }
+        }
+        function cancelJob() {
+          if (!busy) return;
+          ++jobId;
+          jobController?.abort();
+          currentWorker?.terminate();
+          currentWorker = null;
+          currentReject = null;
+          resetDecoder(Error("Pembacaan dibatalkan."));
+          items
+            .filter((i) => ["loading", "processing"].includes(i.status))
+            .forEach((i) => {
+              i.status = i.source ? "ready" : "error";
+              i.error = i.source
+                ? ""
+                : "Pembacaan dibatalkan. Tambahkan kembali file ini untuk mencoba lagi.";
+            });
+          setBusy(false);
+          $("cancelJob").hidden = true;
+          $("progressLabel").textContent =
+            "Dibatalkan · hasil yang sudah selesai tetap tersedia";
+          renderQueue();
+          syncInspector();
+          renderPreview();
+        }
+        function updateActive() {
+          const a = active();
+          if (!a || busy) return;
+          const target =
+            Number($("itemTarget").value) * Number($("itemUnit").value);
+          if (!validTarget(target))
+            return say("Target foto minimal 1 KB dan maksimal 1000 MB.");
+          say();
+          a.target = target;
+          a.unit = $("itemUnit").value;
+          a.format = $("itemFormat").value;
+          a.maxEdge = Number($("itemEdge").value);
+          a.allowResize = $("allowResize").checked;
+          a.background = $("jpegBackground").value;
+          dirty(a);
+          renderQueue();
+          syncInspector();
+          renderPreview();
+        }
+        $("applyBatch").addEventListener("click", () => {
+          const set = settings();
+          if (!validTarget(set.target))
+            return say("Target kelompok minimal 1 KB dan maksimal 1000 MB.");
+          say();
+          selected().forEach((i) => {
+            i.target = set.target;
+            i.unit = set.unit;
+            i.format = set.format;
+            i.maxEdge = set.maxEdge;
+            dirty(i);
+          });
+          renderQueue();
+          syncInspector();
+          renderPreview();
+        });
+        [
+          "itemTarget",
+          "itemFormat",
+          "itemEdge",
+          "allowResize",
+          "jpegBackground",
+        ].forEach((id) => $(id).addEventListener("change", updateActive));
+        /* Inline crop. Coordinates stay normalized to the full rotated source image.
+   Pointer drags resize/move the existing box; they never draw a new selection. */
+        function releaseCrop() {
+          clearViewGesture();
+          cancelAnimationFrame(zoomFrame);
+          cropLoadId++;
+          if (dragState) finishCropDrag();
+          cropState?.bmp?.close?.();
+          if (cropState?.display) {
+            cropState.display.width = 1;
+            cropState.display.height = 1;
+          }
+          cropState = null;
+          dragState = null;
+        }
+        async function openCrop() {
+          if (!active()?.source || busy) return;
+          active().cropApplied = false;
+          if (cropState?.item === active())
+            cropState.view = { zoom: 1, x: 0, y: 0, panMode: false };
+          tab = "original";
+          await renderPreview();
+          $("cropCanvas").focus({ preventScroll: true });
+          $("stage").scrollIntoView({
+            block: "nearest",
+            behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+              ? "instant"
+              : "smooth",
+          });
+        }
+        async function ensureInlineCrop(a, version) {
+          if (cropState?.item === a && cropState.source === a.source) {
+            cropState.rotation = a.rotation;
+            cropState.rect = { ...(a.crop || { x: 0, y: 0, w: 1, h: 1 }) };
+            drawCrop();
+            return;
+          }
+          releaseCrop();
+          const load = ++cropLoadId;
+          const bmp = await decodeNative(a.source);
+          if (
+            load !== cropLoadId ||
+            version !== previewVersion ||
+            activeId !== a.id ||
+            tab !== "original"
+          ) {
+            bmp.close?.();
+            return;
+          }
+          cropState = {
+            item: a,
+            bmp,
+            source: a.source,
+            rotation: a.rotation,
+            rect: { ...(a.crop || { x: 0, y: 0, w: 1, h: 1 }) },
+            geometry: null,
+          };
+          drawCrop();
+        }
+        function cropDimensions() {
+          const s = cropState;
+          return s.rotation % 180
+            ? { w: s.item.height, h: s.item.width }
+            : { w: s.item.width, h: s.item.height };
+        }
+        function viewDimensions() {
+          const d = cropDimensions();
+          if (!cropState.item.cropApplied) return d;
+          return {
+            w: Math.max(1, Math.round(cropState.rect.w * d.w)),
+            h: Math.max(1, Math.round(cropState.rect.h * d.h)),
+          };
+        }
+        function applyCropNow() {
+          if (!cropState || busy) return;
+          if (cropState.item.cropApplied) {
+            openCrop();
+            return;
+          }
+          finishCropDrag();
+          const d = cropDimensions(),
+            b = cropState.rect;
+          const x = Math.max(0, Math.min(d.w - 1, Math.round(b.x * d.w))),
+            y = Math.max(0, Math.min(d.h - 1, Math.round(b.y * d.h)));
+          cropState.rect = {
+            x: x / d.w,
+            y: y / d.h,
+            w: Math.max(1, Math.min(d.w - x, Math.round(b.w * d.w))) / d.w,
+            h: Math.max(1, Math.min(d.h - y, Math.round(b.h * d.h))) / d.h,
+          };
+          commitCrop();
+          cropState.item.crop = { ...cropState.rect };
+          cropState.item.cropApplied = true;
+          cropState.view = { zoom: 1, x: 0, y: 0, panMode: false };
+          drawCrop();
+          $("cropSaved").textContent =
+            "Crop diterapkan. Klik Ubah crop untuk menyesuaikan lagi.";
+          $("previewMeta").textContent =
+            "Foto setelah crop · " +
+            viewDimensions().w +
+            " × " +
+            viewDimensions().h +
+            " px";
+          syncControls();
+        }
+        $("applyCrop").addEventListener("click", applyCropNow);
+        // One Enter shortcut. Ignore repeat/composition so holding Enter cannot
+        // immediately toggle the applied crop back into the original editing view.
+        document.addEventListener(
+          "keydown",
+          (e) => {
+            if (
+              e.key !== "Enter" ||
+              e.repeat ||
+              e.isComposing ||
+              busy ||
+              !cropState ||
+              tab !== "original" ||
+              cropState.item.cropApplied
+            )
+              return;
+            const target = e.target,
+              tag = target?.tagName || "";
+            if (
+              target?.closest?.('button,a,[role="combobox"],[role="listbox"]')
+            )
+              return;
+            const cropInput = ["cropX", "cropY", "cropW", "cropH"].includes(
+              target?.id
+            );
+            if (
+              (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") &&
+              !cropInput
+            )
+              return;
+            e.preventDefault();
+            e.stopPropagation();
+            if (cropInput)
+              target.dispatchEvent(new Event("change", { bubbles: true }));
+            applyCropNow();
+          },
+          true
+        );
+        function clampRect(rect) {
+          const d = cropDimensions(),
+            mw = 1 / d.w,
+            mh = 1 / d.h,
+            x = Math.max(0, Math.min(1 - mw, rect.x)),
+            y = Math.max(0, Math.min(1 - mh, rect.y));
+          return {
+            x,
+            y,
+            w: Math.max(mw, Math.min(1 - x, rect.w)),
+            h: Math.max(mh, Math.min(1 - y, rect.h)),
+          };
+        }
+        function cropHandles(b) {
+          return [
+            ["nw", b.x, b.y],
+            ["n", b.x + b.w / 2, b.y],
+            ["ne", b.x + b.w, b.y],
+            ["e", b.x + b.w, b.y + b.h / 2],
+            ["se", b.x + b.w, b.y + b.h],
+            ["s", b.x + b.w / 2, b.y + b.h],
+            ["sw", b.x, b.y + b.h],
+            ["w", b.x, b.y + b.h / 2],
+          ];
+        }
+        function drawCrop() {
+          if (!cropState || tab !== "original") return;
+          const state = cropState,
+            d = viewDimensions(),
+            pad = 14,
+            stage = $("stage");
+          const maxW = Math.max(
+              150,
+              (stage.clientWidth || window.innerWidth - 60) - 28
+            ),
+            maxH =
+              window.innerWidth <= 720
+                ? 390
+                : window.innerWidth >= 1920
+                ? 620
+                : 480;
+          const scale = Math.min(
+              1,
+              (maxW - pad * 2) / d.w,
+              (maxH - pad * 2) / d.h
+            ),
+            iw = Math.max(1, Math.round(d.w * scale)),
+            ih = Math.max(1, Math.round(d.h * scale));
+          state.geometry = { pad, iw, ih, tw: iw + pad * 2, th: ih + pad * 2 };
+          $("cropViewport").style.height = state.geometry.th + "px";
+          const full = cropDimensions(),
+            b = state.rect;
+          $("cropX").value = Math.round(b.x * full.w);
+          $("cropY").value = Math.round(b.y * full.h);
+          $("cropW").value = Math.max(1, Math.round(b.w * full.w));
+          $("cropH").value = Math.max(1, Math.round(b.h * full.h));
+          $("cropSize").textContent =
+            Math.round(b.w * full.w) +
+            " × " +
+            Math.round(b.h * full.h) +
+            " px · " +
+            state.rotation +
+            "°";
+          $("applyCrop").textContent = state.item.cropApplied
+            ? "Ubah crop"
+            : "Terapkan (Enter)";
+          applyView();
+          $("cropCanvas").setAttribute(
+            "aria-label",
+            "Crop " +
+              Math.round(b.w * full.w) +
+              " kali " +
+              Math.round(b.h * full.h) +
+              " piksel. Tarik handle untuk resize. Gunakan tombol panah untuk menggeser; Alt dan panah untuk resize."
+          );
+        }
+        function commitCrop() {
+          if (!cropState || busy) return;
+          const s = cropState,
+            b = clampRect(s.rect),
+            old = s.item.crop || { x: 0, y: 0, w: 1, h: 1 };
+          s.rect = b;
+          const changed =
+            s.item.rotation !== s.rotation ||
+            ["x", "y", "w", "h"].some((k) => Math.abs(old[k] - b[k]) > 1e-8);
+          if (!changed) return;
+          s.item.rotation = s.rotation;
+          s.item.crop = { ...b };
+          dirty(s.item);
+          $("cropSaved").textContent = "Crop tersimpan otomatis";
+          renderQueue();
+          syncInspector();
+          $("previewMeta").textContent =
+            "Crop " +
+            Math.round(b.w * cropDimensions().w) +
+            " × " +
+            Math.round(b.h * cropDimensions().h) +
+            " px";
+          $("tabResult").disabled = true;
+          drawCrop();
+        }
+        function cropPoint(e) {
+          const r = $("cropViewport").getBoundingClientRect(),
+            s = viewportSize(),
+            m = viewMapping();
+          return {
+            x: (((e.clientX - r.left) * s.w) / r.width - m.x) / m.w,
+            y: (((e.clientY - r.top) * s.h) / r.height - m.y) / m.h,
+          };
+        }
+        function hitCrop(e) {
+          if (!cropState?.geometry) return null;
+          const p = cropPoint(e),
+            b = cropState.rect,
+            m = viewMapping(),
+            s = viewportSize(),
+            r = $("cropViewport").getBoundingClientRect(),
+            threshold = e.pointerType === "touch" ? 23 : 13;
+          let handle = null,
+            dist = Infinity;
+          for (const [key, x, y] of cropHandles(b)) {
+            const dx = ((p.x - x) * m.w * r.width) / s.w,
+              dy = ((p.y - y) * m.h * r.height) / s.h,
+              dd = dx * dx + dy * dy;
+            if (
+              Math.abs(dx) <= threshold &&
+              Math.abs(dy) <= threshold &&
+              dd < dist
+            ) {
+              handle = key;
+              dist = dd;
+            }
+          }
+          if (handle) return { mode: handle, point: p };
+          if (p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h)
+            return { mode: "move", point: p };
+          return null;
+        }
+        const cursors = {
+          nw: "nwse-resize",
+          se: "nwse-resize",
+          ne: "nesw-resize",
+          sw: "nesw-resize",
+          n: "ns-resize",
+          s: "ns-resize",
+          e: "ew-resize",
+          w: "ew-resize",
+          move: "move",
+        };
+        $("cropCanvas").addEventListener("pointerdown", (e) => {
+          if (
+            busy ||
+            !cropState ||
+            cropState.item.cropApplied ||
+            viewGesture ||
+            viewPan
+          )
+            return;
+          const hit = hitCrop(e);
+          if (!hit) return;
+          e.preventDefault();
+          $("cropCanvas").focus({ preventScroll: true });
+          dragState = {
+            start: hit.point,
+            rect: { ...cropState.rect },
+            mode: hit.mode,
+            pointerId: e.pointerId,
+          };
+          $("cropCanvas").setPointerCapture(e.pointerId);
+          $("cropCanvas").style.cursor = cursors[hit.mode];
+          $("cropSaved").textContent = "Sedang menyesuaikan crop…";
+        });
+        $("cropCanvas").addEventListener("pointermove", (e) => {
+          if (!cropState || busy) return;
+          if (cropState.item.cropApplied) {
+            $("cropCanvas").style.cursor = "grab";
+            return;
+          }
+          if ((cropView()?.panMode || spaceHeld) && !dragState) {
+            $("cropCanvas").style.cursor = "grab";
+            return;
+          }
+          if (!dragState) {
+            const hit = hitCrop(e);
+            $("cropCanvas").style.cursor = hit ? cursors[hit.mode] : "default";
+            return;
+          }
+          if (e.pointerId !== dragState.pointerId) return;
+          e.preventDefault();
+          const p = cropPoint(e),
+            s = dragState,
+            b = s.rect,
+            d = cropDimensions(),
+            mw = 1 / d.w,
+            mh = 1 / d.h;
+          let rect = { ...b };
+          if (s.mode === "move") {
+            rect.x = Math.max(0, Math.min(1 - b.w, b.x + p.x - s.start.x));
+            rect.y = Math.max(0, Math.min(1 - b.h, b.y + p.y - s.start.y));
+          } else {
+            if (s.mode.includes("w")) {
+              rect.x = Math.max(0, Math.min(b.x + b.w - mw, p.x));
+              rect.w = b.x + b.w - rect.x;
+            }
+            if (s.mode.includes("e"))
+              rect.w = Math.max(mw, Math.min(1 - b.x, p.x - b.x));
+            if (s.mode.includes("n")) {
+              rect.y = Math.max(0, Math.min(b.y + b.h - mh, p.y));
+              rect.h = b.y + b.h - rect.y;
+            }
+            if (s.mode.includes("s"))
+              rect.h = Math.max(mh, Math.min(1 - b.y, p.y - b.y));
+          }
+          cropState.rect = clampRect(rect);
+          drawCrop();
+        });
+        function finishCropDrag() {
+          if (!dragState) return;
+          const pointer = dragState.pointerId;
+          dragState = null;
+          commitCrop();
+          try {
+            if ($("cropCanvas").hasPointerCapture(pointer))
+              $("cropCanvas").releasePointerCapture(pointer);
+          } catch (_) {}
+        }
+        ["pointerup", "pointercancel", "lostpointercapture"].forEach((type) =>
+          $("cropCanvas").addEventListener(type, finishCropDrag)
+        );
+        $("cropCanvas").addEventListener("keydown", (e) => {
+          if (
+            !cropState ||
+            busy ||
+            cropState.item.cropApplied ||
+            !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)
+          )
+            return;
+          e.preventDefault();
+          const d = cropDimensions(),
+            b = { ...cropState.rect },
+            step = e.shiftKey ? 10 : 1,
+            dx = step / d.w,
+            dy = step / d.h;
+          if (e.altKey) {
+            if (e.key === "ArrowLeft") b.w -= dx;
+            if (e.key === "ArrowRight") b.w += dx;
+            if (e.key === "ArrowUp") b.h -= dy;
+            if (e.key === "ArrowDown") b.h += dy;
+          } else {
+            if (e.key === "ArrowLeft") b.x -= dx;
+            if (e.key === "ArrowRight") b.x += dx;
+            if (e.key === "ArrowUp") b.y -= dy;
+            if (e.key === "ArrowDown") b.y += dy;
+            b.x = Math.max(0, Math.min(1 - b.w, b.x));
+            b.y = Math.max(0, Math.min(1 - b.h, b.y));
+          }
+          cropState.rect = clampRect(b);
+          commitCrop();
+          drawCrop();
+        });
+        ["cropX", "cropY", "cropW", "cropH"].forEach((id) =>
+          $(id).addEventListener("change", () => {
+            if (!cropState || busy) return;
+            cropState.item.cropApplied = false;
+            const d = cropDimensions(),
+              rect = {
+                x: Number($("cropX").value) / d.w,
+                y: Number($("cropY").value) / d.h,
+                w: Number($("cropW").value) / d.w,
+                h: Number($("cropH").value) / d.h,
+              };
+            if (Object.values(rect).some((n) => !Number.isFinite(n))) return;
+            cropState.rect = clampRect(rect);
+            commitCrop();
+            drawCrop();
+          })
+        );
+        $("rotateCrop").addEventListener("click", () => {
+          if (!cropState || busy) return;
+          finishCropDrag();
+          cropState.item.cropApplied = false;
+          cropState.rotation = (cropState.rotation + 90) % 360;
+          cropState.rect = { x: 0, y: 0, w: 1, h: 1 };
+          cropState.view = { zoom: 1, x: 0, y: 0, panMode: false };
+          commitCrop();
+          drawCrop();
+        });
+        $("resetCrop").addEventListener("click", () => {
+          if (!cropState || busy) return;
+          finishCropDrag();
+          cropState.item.cropApplied = false;
+          cropState.view = { zoom: 1, x: 0, y: 0, panMode: false };
+          cropState.rect = { x: 0, y: 0, w: 1, h: 1 };
+          commitCrop();
+          drawCrop();
+        });
+        let cropResizeFrame = 0;
+        window.addEventListener("resize", () => {
+          if (!cropState) return;
+          finishCropDrag();
+          cancelAnimationFrame(cropResizeFrame);
+          cropResizeFrame = requestAnimationFrame(drawCrop);
+        });
+        if (window.ResizeObserver)
+          new ResizeObserver(() => {
+            if (cropState && !dragState) drawCrop();
+          }).observe($("stage"));
+
+        /* View transforms never modify source crop coordinates. The detail canvas draws
+   directly from the full-resolution bitmap, rather than enlarging a thumbnail. */
+        const viewPointers = new Map();
+        let viewGesture = null,
+          viewPan = null,
+          safariGesture = null,
+          spaceHeld = false,
+          zoomFrame = 0,
+          gestureFrame = 0;
+        function cropView() {
+          if (!cropState) return null;
+          return (cropState.view ||= { zoom: 1, x: 0, y: 0, panMode: false });
+        }
+        function viewportSize() {
+          const g = cropState.geometry,
+            v = $("cropViewport");
+          return { w: v.clientWidth || g.tw, h: v.clientHeight || g.th };
+        }
+        function constrainView() {
+          const view = cropView();
+          if (!view || !cropState.geometry) return;
+          const g = cropState.geometry,
+            s = viewportSize();
+          const mx = Math.max(0, (g.tw * view.zoom - s.w) / 2),
+            my = Math.max(0, (g.th * view.zoom - s.h) / 2);
+          view.x = Math.max(-mx, Math.min(mx, view.x));
+          view.y = Math.max(-my, Math.min(my, view.y));
+        }
+        function applyView() {
+          const view = cropView();
+          if (!view || !cropState.geometry) return;
+          constrainView();
+          const g = cropState.geometry,
+            d = viewDimensions(),
+            c = $("cropCanvas");
+          c.style.transform = "none";
+          $("zoomLevel").textContent =
+            Math.round((g.iw / d.w) * view.zoom * 100) + "%";
+          $("panMode").setAttribute("aria-pressed", String(view.panMode));
+          $("panMode").classList.toggle("active", view.panMode);
+          paintDetail();
+          paintCropOverlay();
+        }
+        // Crop graphics live in viewport/screen coordinates, never on a CSS-scaled bitmap.
+        function viewMapping() {
+          const g = cropState.geometry,
+            v = cropView(),
+            s = viewportSize();
+          return {
+            x: s.w / 2 + v.x - (g.tw * v.zoom) / 2 + g.pad * v.zoom,
+            y: s.h / 2 + v.y - (g.th * v.zoom) / 2 + g.pad * v.zoom,
+            w: g.iw * v.zoom,
+            h: g.ih * v.zoom,
+          };
+        }
+        function paintCropOverlay() {
+          if (!cropState || tab !== "original") return;
+          const s = viewportSize(),
+            d = viewDimensions(),
+            m = viewMapping(),
+            v = cropView(),
+            c = $("cropCanvas"),
+            dpr = Math.min(3, window.devicePixelRatio || 1);
+          const w = Math.max(1, Math.round(s.w * dpr)),
+            h = Math.max(1, Math.round(s.h * dpr));
+          if (c.width !== w || c.height !== h) {
+            c.width = w;
+            c.height = h;
+          }
+          c.style.width = "100%";
+          c.style.height = "100%";
+          c.style.transform = "none";
+          const ctx = c.getContext("2d");
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, s.w, s.h);
+          const snap = (value) => (Math.floor(value * dpr) + 0.5) / dpr,
+            px = m.w / d.w,
+            py = m.h / d.h;
+          // Draw individual SOURCE-pixel boundaries, not a fixed-size decorative grid.
+          if (v.pixelGrid !== false && Math.min(px, py) >= 2) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(
+              Math.max(0, m.x),
+              Math.max(0, m.y),
+              Math.max(0, Math.min(s.w, m.x + m.w) - Math.max(0, m.x)),
+              Math.max(0, Math.min(s.h, m.y + m.h) - Math.max(0, m.y))
+            );
+            ctx.clip();
+            ctx.lineWidth = 1 / dpr;
+            ctx.strokeStyle = "rgba(230,237,247,.4)";
+            ctx.beginPath();
+            const x0 = Math.max(0, Math.floor(-m.x / px)),
+              x1 = Math.min(d.w, Math.ceil((s.w - m.x) / px));
+            const y0 = Math.max(0, Math.floor(-m.y / py)),
+              y1 = Math.min(d.h, Math.ceil((s.h - m.y) / py));
+            for (let x = x0; x <= x1; x++) {
+              const xx = snap(m.x + x * px);
+              ctx.moveTo(xx, 0);
+              ctx.lineTo(xx, s.h);
+            }
+            for (let y = y0; y <= y1; y++) {
+              const yy = snap(m.y + y * py);
+              ctx.moveTo(0, yy);
+              ctx.lineTo(s.w, yy);
+            }
+            ctx.stroke();
+            ctx.restore();
+          }
+          if (cropState.item.cropApplied) {
+            $("pixelGrid").setAttribute(
+              "aria-pressed",
+              String(v.pixelGrid !== false)
+            );
+            $("pixelGrid").classList.toggle("active", v.pixelGrid !== false);
+            return;
+          }
+          const b = cropState.rect,
+            left = m.x + b.x * m.w,
+            top = m.y + b.y * m.h,
+            right = left + b.w * m.w,
+            bottom = top + b.h * m.h;
+          // Clip the mask to the visible photo so off-screen crop bounds remain safe.
+          const ix = Math.max(0, m.x),
+            iy = Math.max(0, m.y),
+            ir = Math.min(s.w, m.x + m.w),
+            ib = Math.min(s.h, m.y + m.h);
+          if (ir > ix && ib > iy) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(ix, iy, ir - ix, ib - iy);
+            ctx.clip();
+            ctx.fillStyle = "rgba(8,16,29,.62)";
+            const x = Math.max(ix, Math.min(ir, left)),
+              y = Math.max(iy, Math.min(ib, top)),
+              r = Math.max(ix, Math.min(ir, right)),
+              bt = Math.max(iy, Math.min(ib, bottom));
+            ctx.fillRect(ix, iy, ir - ix, Math.max(0, y - iy));
+            ctx.fillRect(ix, bt, ir - ix, Math.max(0, ib - bt));
+            ctx.fillRect(ix, y, Math.max(0, x - ix), Math.max(0, bt - y));
+            ctx.fillRect(r, y, Math.max(0, ir - r), Math.max(0, bt - y));
+            ctx.restore();
+          }
+          // Pixel-aligned strokes stay exactly one physical display pixel at every zoom.
+          ctx.lineWidth = 1 / dpr;
+          ctx.strokeStyle = "#5688ff";
+          ctx.beginPath();
+          ctx.moveTo(snap(left), snap(top));
+          ctx.lineTo(snap(right), snap(top));
+          ctx.lineTo(snap(right), snap(bottom));
+          ctx.lineTo(snap(left), snap(bottom));
+          ctx.closePath();
+          ctx.stroke();
+          ctx.strokeStyle = "rgba(73,125,255,.7)";
+          ctx.beginPath();
+          for (let n = 1; n < 3; n++) {
+            const x = snap(left + ((right - left) * n) / 3),
+              y = snap(top + ((bottom - top) * n) / 3);
+            ctx.moveTo(x, top);
+            ctx.lineTo(x, bottom);
+            ctx.moveTo(left, y);
+            ctx.lineTo(right, y);
+          }
+          ctx.stroke();
+          for (const [, hx, hy] of cropHandles(b)) {
+            const x = m.x + hx * m.w,
+              y = m.y + hy * m.h;
+            if (x < -8 || x > s.w + 8 || y < -8 || y > s.h + 8) continue;
+            const l = Math.round((x - 5) * dpr) / dpr,
+              t = Math.round((y - 5) * dpr) / dpr;
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(l, t, 10, 10);
+            ctx.strokeStyle = "#5688ff";
+            ctx.strokeRect(snap(l), snap(t), 10, 10);
+          }
+          $("pixelGrid").setAttribute(
+            "aria-pressed",
+            String(v.pixelGrid !== false)
+          );
+          $("pixelGrid").classList.toggle("active", v.pixelGrid !== false);
+        }
+
+        function paintDetail() {
+          if (!cropState || tab !== "original") return;
+          const g = cropState.geometry,
+            view = cropView(),
+            s = viewportSize(),
+            dpr = Math.min(2, window.devicePixelRatio || 1),
+            c = $("detailCanvas");
+          const w = Math.max(1, Math.round(s.w * dpr)),
+            h = Math.max(1, Math.round(s.h * dpr));
+          if (c.width !== w || c.height !== h) {
+            c.width = w;
+            c.height = h;
+          }
+          const ctx = c.getContext("2d");
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, s.w, s.h);
+          ctx.fillStyle = "#11151d";
+          ctx.fillRect(0, 0, s.w, s.h);
+          const d = viewDimensions(),
+            pixelScale = (view.zoom * g.iw) / d.w;
+          ctx.imageSmoothingEnabled = pixelScale < 1;
+          ctx.imageSmoothingQuality = "high";
+          ctx.save();
+          ctx.translate(
+            s.w / 2 + view.x - (g.tw * view.zoom) / 2 + g.pad * view.zoom,
+            s.h / 2 + view.y - (g.th * view.zoom) / 2 + g.pad * view.zoom
+          );
+          ctx.scale(view.zoom, view.zoom);
+          drawTransformed(
+            ctx,
+            cropState.bmp,
+            { ...cropState.item, rotation: cropState.rotation },
+            cropState.item.cropApplied ? cropState.rect : null,
+            g.iw,
+            g.ih
+          );
+          ctx.restore();
+        }
+        function maxViewZoom() {
+          return Math.max(
+            64,
+            (64 * viewDimensions().w) / cropState.geometry.iw
+          );
+        }
+        function zoomAt(value, clientX, clientY) {
+          const view = cropView();
+          if (!view || !cropState.geometry || busy) return;
+          const r = $("cropViewport").getBoundingClientRect(),
+            s = viewportSize(),
+            cx = Number.isFinite(clientX) ? clientX - r.left : s.w / 2,
+            cy = Number.isFinite(clientY) ? clientY - r.top : s.h / 2;
+          const x = (cx - s.w / 2 - view.x) / view.zoom,
+            y = (cy - s.h / 2 - view.y) / view.zoom,
+            z = Math.max(0.25, Math.min(maxViewZoom(), value));
+          view.x = cx - s.w / 2 - x * z;
+          view.y = cy - s.h / 2 - y * z;
+          view.zoom = z;
+          applyView();
+          cancelAnimationFrame(zoomFrame);
+          zoomFrame = requestAnimationFrame(drawCrop);
+        }
+        function resetZoom() {
+          const view = cropView();
+          if (!view) return;
+          view.zoom = 1;
+          view.x = 0;
+          view.y = 0;
+          drawCrop();
+        }
+        function clearViewGesture() {
+          cancelAnimationFrame(gestureFrame);
+          gestureFrame = 0;
+          viewPointers.clear();
+          viewGesture = null;
+          viewPan = null;
+          safariGesture = null;
+          spaceHeld = false;
+        }
+        function rollbackCropForGesture() {
+          if (dragState && cropState) {
+            cropState.rect = { ...dragState.rect };
+            dragState = null;
+            drawCrop();
+            $("cropSaved").textContent = "Zoom tampilan · crop tidak berubah";
+          }
+        }
+        function pairInfo() {
+          const [a, b] = [...viewPointers.values()];
+          return {
+            x: (a.x + b.x) / 2,
+            y: (a.y + b.y) / 2,
+            distance: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)),
+          };
+        }
+        const viewport = $("cropViewport");
+        viewport.addEventListener(
+          "pointerdown",
+          (e) => {
+            if (!cropState || busy) return;
+            viewPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (viewPointers.size >= 2) {
+              rollbackCropForGesture();
+              const p = pairInfo(),
+                view = cropView(),
+                r = viewport.getBoundingClientRect(),
+                s = viewportSize();
+              viewGesture = {
+                distance: p.distance,
+                zoom: view.zoom,
+                worldX: (p.x - r.left - s.w / 2 - view.x) / view.zoom,
+                worldY: (p.y - r.top - s.h / 2 - view.y) / view.zoom,
+                blocked: false,
+                pinching: false,
+              };
+              viewPan = null;
+              e.preventDefault();
+              e.stopImmediatePropagation();
+              viewport.setPointerCapture(e.pointerId);
+              return;
+            }
+            const view = cropView();
+            if (
+              view.panMode ||
+              cropState.item.cropApplied ||
+              spaceHeld ||
+              e.button === 1
+            ) {
+              rollbackCropForGesture();
+              viewPan = {
+                id: e.pointerId,
+                startX: e.clientX,
+                startY: e.clientY,
+                x: view.x,
+                y: view.y,
+              };
+              e.preventDefault();
+              e.stopImmediatePropagation();
+              viewport.setPointerCapture(e.pointerId);
+            }
+          },
+          true
+        );
+        viewport.addEventListener(
+          "pointermove",
+          (e) => {
+            if (!cropState || busy) return;
+            if (viewPointers.has(e.pointerId))
+              viewPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (viewGesture) {
+              e.preventDefault();
+              e.stopImmediatePropagation();
+              if (viewPointers.size < 2 || viewGesture.blocked) return;
+              if (!gestureFrame)
+                gestureFrame = requestAnimationFrame(() => {
+                  gestureFrame = 0;
+                  updateTouchView();
+                });
+              return;
+            }
+            if (viewPan && e.pointerId === viewPan.id) {
+              const view = cropView();
+              view.x = viewPan.x + e.clientX - viewPan.startX;
+              view.y = viewPan.y + e.clientY - viewPan.startY;
+              applyView();
+              e.preventDefault();
+              e.stopImmediatePropagation();
+            }
+          },
+          true
+        );
+        function updateTouchView() {
+          if (
+            !cropState ||
+            !viewGesture ||
+            viewPointers.size < 2 ||
+            viewGesture.blocked
+          )
+            return;
+          const p = pairInfo(),
+            r = viewport.getBoundingClientRect(),
+            s = viewportSize(),
+            view = cropView();
+          if (
+            !viewGesture.pinching &&
+            Math.abs(p.distance - viewGesture.distance) >
+              Math.max(8, viewGesture.distance * 0.05)
+          )
+            viewGesture.pinching = true;
+          view.zoom = viewGesture.pinching
+            ? Math.max(
+                0.25,
+                Math.min(
+                  maxViewZoom(),
+                  viewGesture.zoom *
+                    Math.pow(p.distance / viewGesture.distance, 1.25)
+                )
+              )
+            : viewGesture.zoom;
+          view.x = p.x - r.left - s.w / 2 - viewGesture.worldX * view.zoom;
+          view.y = p.y - r.top - s.h / 2 - viewGesture.worldY * view.zoom;
+          applyView();
+          cancelAnimationFrame(zoomFrame);
+          zoomFrame = requestAnimationFrame(drawCrop);
+        }
+        function endViewPointer(e) {
+          if (gestureFrame) {
+            cancelAnimationFrame(gestureFrame);
+            gestureFrame = 0;
+            updateTouchView();
+          }
+          const wasView = !!viewGesture || !!viewPan;
+          viewPointers.delete(e.pointerId);
+          if (viewGesture) {
+            viewGesture.blocked = true;
+            if (!viewPointers.size) viewGesture = null;
+          }
+          if (viewPan?.id === e.pointerId) viewPan = null;
+          if (wasView) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            try {
+              if (viewport.hasPointerCapture(e.pointerId))
+                viewport.releasePointerCapture(e.pointerId);
+            } catch (_) {}
+            drawCrop();
+          }
+        }
+        ["pointerup", "pointercancel"].forEach((type) =>
+          viewport.addEventListener(type, endViewPointer, true)
+        );
+        viewport.addEventListener(
+          "wheel",
+          (e) => {
+            if (!cropState || busy) return;
+            e.preventDefault();
+            const unit =
+              e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? viewportSize().h : 1;
+            // Trackpad pinch arrives as ctrl+wheel; normal two-finger scroll only pans.
+            if (e.ctrlKey)
+              zoomAt(
+                cropView().zoom * Math.exp(-e.deltaY * unit * 0.003),
+                e.clientX,
+                e.clientY
+              );
+            else {
+              const view = cropView();
+              view.x -= (e.deltaX || 0) * unit;
+              view.y -= (e.deltaY || 0) * unit;
+              applyView();
+            }
+          },
+          { passive: false }
+        );
+        viewport.addEventListener(
+          "gesturestart",
+          (e) => {
+            if (!cropState || busy) return;
+            e.preventDefault();
+            if (viewPointers.size < 2)
+              safariGesture = { zoom: cropView().zoom };
+          },
+          { passive: false }
+        );
+        viewport.addEventListener(
+          "gesturechange",
+          (e) => {
+            if (!cropState || busy) return;
+            e.preventDefault();
+            if (safariGesture && viewPointers.size < 2)
+              zoomAt(safariGesture.zoom * (e.scale || 1), e.clientX, e.clientY);
+          },
+          { passive: false }
+        );
+        viewport.addEventListener(
+          "gestureend",
+          (e) => {
+            if (cropState) e.preventDefault();
+            safariGesture = null;
+          },
+          { passive: false }
+        );
+        viewport.addEventListener("keydown", (e) => {
+          if (
+            e.code === "Space" &&
+            !/INPUT|TEXTAREA|BUTTON/.test(e.target.tagName)
+          ) {
+            spaceHeld = true;
+            e.preventDefault();
+          }
+        });
+        window.addEventListener("keyup", (e) => {
+          if (e.code === "Space") spaceHeld = false;
+        });
+        window.addEventListener("blur", () => {
+          spaceHeld = false;
+        });
+        $("zoomIn").addEventListener("click", () => {
+          if (cropState) zoomAt(cropView().zoom * 1.3);
+        });
+        $("zoomOut").addEventListener("click", () => {
+          if (cropState) zoomAt(cropView().zoom / 1.3);
+        });
+        $("zoomFit").addEventListener("click", resetZoom);
+        $("zoomPixel").addEventListener("click", () => {
+          if (cropState) zoomAt(viewDimensions().w / cropState.geometry.iw);
+        });
+        $("zoomPixels").addEventListener("click", () => {
+          if (cropState)
+            zoomAt((4 * viewDimensions().w) / cropState.geometry.iw);
+        });
+        $("pixelGrid").addEventListener("click", () => {
+          const view = cropView();
+          if (view) {
+            view.pixelGrid = view.pixelGrid === false;
+            paintCropOverlay();
+          }
+        });
+        $("panMode").addEventListener("click", () => {
+          const view = cropView();
+          if (view) {
+            finishCropDrag();
+            view.panMode = !view.panMode;
+            applyView();
+          }
+        });
+
+        function safeName(item) {
+          return (
+            (item.file.name
+              .replace(/\.[^.]+$/, "")
+              .replace(/[<>:"/\\|?*\x00-\x1f]/g, "_")
+              .replace(/^\.+/, "")
+              .slice(0, 140) || "photo") +
+            "-compressed." +
+            formats[item.format]
+          );
+        }
+        function downloadBlob(blob, name) {
+          if (downloadURL) URL.revokeObjectURL(downloadURL);
+          downloadURL = URL.createObjectURL(blob);
+          const link = $("downloadAgain");
+          link.href = downloadURL;
+          link.download = name;
+          link.hidden = false;
+          link.textContent = "Download ulang " + name;
+          const a = document.createElement("a");
+          a.href = downloadURL;
+          a.download = name;
+          document.body.append(a);
+          a.click();
+          a.remove();
+          $("downloadStatus").textContent =
+            "Download dimulai: " +
+            name +
+            " (" +
+            size(blob.size) +
+            "). Periksa daftar Downloads browser untuk memastikan file tersimpan.";
+        }
+        // All group exports are direct image downloads; no directory picker or ZIP.
+        const looseURLs = [];
+        function uniqueOutputName(item, used) {
+          let base = safeName(item),
+            name = base,
+            n = 2;
+          const dot = base.lastIndexOf(".");
+          while (used.has(name.toLowerCase()))
+            name = base.slice(0, dot) + "-" + n++ + base.slice(dot);
+          used.add(name.toLowerCase());
+          return name;
+        }
+        async function exportLoose(list) {
+          if (busy || !list.length) return;
+          if (list.some((i) => !i.result))
+            return say("Kompres semua foto pilihan terlebih dahulu.");
+          if (list.length === 1)
+            return downloadBlob(list[0].result.blob, safeName(list[0]));
+          say();
+          $("downloadAgain").hidden = true;
+          $("downloadStatus").textContent =
+            "Menyiapkan " +
+            list.length +
+            " unduhan gambar. Izinkan multiple downloads bila browser memintanya.";
+          const id = ++jobId;
+          setBusy(true);
+          jobController = new AbortController();
+          $("cancelJob").hidden = false;
+          const used = new Set();
+          let requested = 0;
+          try {
+            for (const item of list) {
+              jobController.signal.throwIfAborted();
+              if (id !== jobId) break;
+              const url = URL.createObjectURL(item.result.blob);
+              looseURLs.push(url);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = uniqueOutputName(item, used);
+              document.body.append(a);
+              a.click();
+              a.remove();
+              requested++;
+              showProgress(
+                (requested / list.length) * 100,
+                "Mengirim " + requested + "/" + list.length + " unduhan…"
+              );
+              await new Promise((r) => setTimeout(r, 250));
+            }
+            if (id === jobId)
+              $("downloadStatus").textContent =
+                requested +
+                " permintaan download dikirim tanpa ZIP. Izinkan multiple downloads jika browser memintanya dan periksa daftar Downloads. Folder baru tidak dibuat melalui metode ini.";
+          } catch (e) {
+            if (id === jobId && e.name !== "AbortError")
+              say("Download terhenti: " + e.message);
+          } finally {
+            if (id === jobId) {
+              setBusy(false);
+              $("cancelJob").hidden = true;
+            }
+          }
+        }
+        async function exportItems(list) {
+          return exportLoose(list);
+        }
+        window.addEventListener("pagehide", (e) => {
+          if (!e.persisted) {
+            looseURLs.forEach((url) => URL.revokeObjectURL(url));
+            looseURLs.length = 0;
+          }
+        });
+
+        // Accessible custom listboxes, portaled to body so panel overflow cannot clip them.
+        const customSelects = [];
+        let openSelect = null;
+        function closeSelect() {
+          if (!openSelect) return;
+          openSelect.menu.hidden = true;
+          openSelect.trigger.setAttribute("aria-expanded", "false");
+          openSelect.trigger.removeAttribute("aria-activedescendant");
+          openSelect = null;
+        }
+        function refreshSelects() {
+          customSelects.forEach((s) => {
+            const disabled = s.select.matches(":disabled");
+            if (s.trigger.disabled !== disabled) s.trigger.disabled = disabled;
+            s.value.textContent =
+              s.select.selectedOptions[0]?.textContent || "";
+          });
+          if (openSelect?.trigger.disabled) closeSelect();
+        }
+        document.querySelectorAll("select").forEach((select) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "select-control";
+          select.before(wrapper);
+          wrapper.appendChild(select);
+          select.hidden = true;
+          select.tabIndex = -1;
+          const trigger = document.createElement("button");
+          trigger.type = "button";
+          trigger.className = "select-trigger";
+          trigger.id = select.id + "-trigger";
+          trigger.setAttribute("role", "combobox");
+          trigger.setAttribute("aria-haspopup", "listbox");
+          trigger.setAttribute("aria-expanded", "false");
+          trigger.innerHTML =
+            '<span class="select-value"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+          const label = document.querySelector(
+            'label[for="' + select.id + '"]'
+          );
+          if (label) {
+            label.htmlFor = trigger.id;
+            label.id = select.id + "-label";
+            trigger.setAttribute("aria-labelledby", label.id);
+          }
+          const menu = document.createElement("div");
+          menu.className = "select-menu";
+          menu.id = select.id + "-listbox";
+          menu.setAttribute("role", "listbox");
+          menu.hidden = true;
+          if (label) menu.setAttribute("aria-labelledby", label.id);
+          trigger.setAttribute("aria-controls", menu.id);
+          wrapper.appendChild(trigger);
+          document.body.appendChild(menu);
+          const state = {
+            select,
+            trigger,
+            menu,
+            value: trigger.querySelector(".select-value"),
+            active: select.selectedIndex,
+            options: [],
+          };
+          function activate(index) {
+            state.active = Math.max(
+              0,
+              Math.min(select.options.length - 1, index)
+            );
+            state.options.forEach((node, n) => {
+              node.classList.toggle("is-active", n === state.active);
+              node.setAttribute(
+                "aria-selected",
+                String(n === select.selectedIndex)
+              );
+            });
+            trigger.setAttribute(
+              "aria-activedescendant",
+              state.options[state.active].id
+            );
+            state.options[state.active].scrollIntoView({ block: "nearest" });
+          }
+          function choose(index) {
+            select.selectedIndex = index;
+            select.dispatchEvent(new Event("input", { bubbles: true }));
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            refreshSelects();
+            closeSelect();
+            trigger.focus({ preventScroll: true });
+          }
+          Array.from(select.options).forEach((option, i) => {
+            const node = document.createElement("div");
+            node.className = "select-option";
+            node.id = select.id + "-option-" + i;
+            node.textContent = option.textContent;
+            node.setAttribute("role", "option");
+            node.setAttribute(
+              "aria-selected",
+              String(i === select.selectedIndex)
+            );
+            node.addEventListener("mousedown", (e) => e.preventDefault());
+            node.addEventListener("click", () => choose(i));
+            node.addEventListener("pointermove", () => activate(i));
+            menu.appendChild(node);
+            state.options.push(node);
+          });
+          function open() {
+            if (trigger.disabled) return;
+            closeSelect();
+            const dialog = trigger.closest("dialog");
+            (dialog || document.body).appendChild(menu);
+            openSelect = state;
+            menu.hidden = false;
+            trigger.setAttribute("aria-expanded", "true");
+            const r = trigger.getBoundingClientRect(),
+              vh = window.innerHeight;
+            const roomBelow = vh - r.bottom - 12,
+              roomAbove = r.top - 12;
+            const above = roomBelow < 170 && roomAbove > roomBelow;
+            menu.style.width = Math.min(r.width, window.innerWidth - 24) + "px";
+            menu.style.left =
+              Math.max(12, Math.min(r.left, window.innerWidth - r.width - 12)) +
+              "px";
+            menu.style.maxHeight =
+              Math.max(80, Math.min(290, above ? roomAbove : roomBelow)) + "px";
+            menu.style.top = above ? "auto" : r.bottom + 6 + "px";
+            menu.style.bottom = above ? vh - r.top + 6 + "px" : "auto";
+            activate(select.selectedIndex);
+          }
+          trigger.addEventListener("click", () =>
+            openSelect === state ? closeSelect() : open()
+          );
+          let typed = "",
+            typedAt = 0;
+          trigger.addEventListener("keydown", (e) => {
+            if (
+              [
+                "ArrowDown",
+                "ArrowUp",
+                "Home",
+                "End",
+                "Escape",
+                "Enter",
+                " ",
+              ].includes(e.key)
+            ) {
+              e.preventDefault();
+              if (e.key === "Escape") return closeSelect();
+              if (e.key === "Enter" || e.key === " ")
+                return openSelect === state ? choose(state.active) : open();
+              if (openSelect !== state) open();
+              activate(
+                e.key === "Home"
+                  ? 0
+                  : e.key === "End"
+                  ? select.options.length - 1
+                  : state.active + (e.key === "ArrowUp" ? -1 : 1)
+              );
+            } else if (e.key === "Tab") closeSelect();
+            else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+              e.preventDefault();
+              if (openSelect !== state) open();
+              typed = performance.now() - typedAt > 700 ? e.key : typed + e.key;
+              typedAt = performance.now();
+              const index = Array.from(select.options).findIndex((o) =>
+                o.text.toLowerCase().startsWith(typed.toLowerCase())
+              );
+              if (index >= 0) activate(index);
+            }
+          });
+          select.addEventListener("change", refreshSelects);
+          customSelects.push(state);
+        });
+        document.addEventListener("pointerdown", (e) => {
+          if (
+            openSelect &&
+            !openSelect.trigger.contains(e.target) &&
+            !openSelect.menu.contains(e.target)
+          )
+            closeSelect();
+        });
+        document.addEventListener("focusin", (e) => {
+          if (
+            openSelect &&
+            !openSelect.trigger.contains(e.target) &&
+            !openSelect.menu.contains(e.target)
+          )
+            closeSelect();
+        });
+        window.addEventListener("resize", closeSelect);
+        window.addEventListener(
+          "scroll",
+          (e) => {
+            if (
+              openSelect &&
+              e.target !== openSelect.menu &&
+              !openSelect.menu.contains(e.target)
+            )
+              closeSelect();
+          },
+          true
+        );
+        new MutationObserver(refreshSelects).observe(document.body, {
+          attributes: true,
+          attributeFilter: ["disabled"],
+          subtree: true,
+        });
+        refreshSelects();
+
+        let previousBatchUnit = Number($("batchUnit").value);
+        $("batchUnit").addEventListener("change", () => {
+          const unit = Number($("batchUnit").value);
+          $("batchTarget").value = +(
+            (Number($("batchTarget").value) * previousBatchUnit) /
+            unit
+          ).toFixed(6);
+          previousBatchUnit = unit;
+        });
+        $("itemUnit").addEventListener("change", () => {
+          const a = active();
+          if (!a || busy) return;
+          a.unit = $("itemUnit").value;
+          syncInspector();
+        });
+        ["addTop", "addSide", "chooseFiles"].forEach((id) =>
+          $(id).addEventListener("click", () => $("fileInput").click())
+        );
+        $("fileInput").addEventListener("change", (e) =>
+          addFiles(e.target.files)
+        );
+        $("selectAll").addEventListener("change", (e) => {
+          items.forEach((i) => (i.selected = e.target.checked));
+          renderQueue();
+        });
+        $("removeSelected").addEventListener("click", () =>
+          removeItems(selected())
+        );
+        $("compressSelected").addEventListener("click", compressSelection);
+        $("cancelJob").addEventListener("click", cancelJob);
+        $("downloadSelected").addEventListener("click", () =>
+          exportItems(selected())
+        );
+        $("downloadOne").addEventListener("click", () => {
+          const a = active();
+          if (a?.result) exportItems([a]);
+        });
+        ["cropTop", "cropButton"].forEach((id) =>
+          $(id).addEventListener("click", openCrop)
+        );
+        $("tabOriginal").addEventListener("click", () => {
+          finishCropDrag();
+          tab = "original";
+          renderPreview();
+        });
+        $("tabResult").addEventListener("click", () => {
+          finishCropDrag();
+          if (active()?.result) {
+            tab = "result";
+            renderPreview();
+          }
+        });
+        let dragDepth = 0;
+        $("stage").addEventListener("dragenter", (e) => {
+          e.preventDefault();
+          if (!busy) {
+            dragDepth++;
+            $("dropZone").hidden = false;
+            $("dropZone").classList.add("over");
+          }
+        });
+        $("stage").addEventListener("dragover", (e) => {
+          e.preventDefault();
+          if (e.dataTransfer)
+            e.dataTransfer.dropEffect = busy ? "none" : "copy";
+        });
+        $("stage").addEventListener("dragleave", (e) => {
+          e.preventDefault();
+          dragDepth = Math.max(0, dragDepth - 1);
+          if (!dragDepth) {
+            $("dropZone").classList.remove("over");
+            $("dropZone").hidden = !!items.length;
+          }
+        });
+        $("stage").addEventListener("drop", (e) => {
+          e.preventDefault();
+          dragDepth = 0;
+          $("dropZone").classList.remove("over");
+          $("dropZone").hidden = !!items.length;
+          if (!busy) addFiles(e.dataTransfer.files);
+        });
+        window.addEventListener("dragover", (e) => {
+          if (Array.from(e.dataTransfer?.types || []).includes("Files"))
+            e.preventDefault();
+        });
+        window.addEventListener("drop", (e) => {
+          if (Array.from(e.dataTransfer?.types || []).includes("Files"))
+            e.preventDefault();
+        });
+        window.addEventListener("beforeunload", (e) => {
+          if (busy) {
+            e.preventDefault();
+            e.returnValue = "";
+          }
+        });
+        window.addEventListener("pagehide", (e) => {
+          if (busy) cancelJob();
+          releaseCrop();
+          if (!e.persisted) resetDecoder(Error("Halaman ditutup."));
+        });
+        renderQueue();
+        syncInspector();
+      })();
+    </script>
+  </body>
+</html>
