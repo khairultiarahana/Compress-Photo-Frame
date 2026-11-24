@@ -178,6 +178,11 @@
       .button.wide {
         width: 100%;
       }
+      .intro-actions {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+      }
       .icon-btn {
         width: 34px;
         height: 34px;
@@ -981,7 +986,7 @@
           display: block;
           margin-bottom: 20px;
         }
-        .intro > .button {
+        .intro-actions {
           margin-top: 16px;
         }
         .batch {
@@ -1454,9 +1459,14 @@
             ruang kerja.
           </p>
         </div>
-        <button type="button" class="button outline" id="addTop">
-          <svg aria-hidden="true"><use href="#plus" /></svg>Tambah foto
-        </button>
+        <div class="intro-actions">
+          <button type="button" class="button outline" id="resetAll">
+            <svg aria-hidden="true"><use href="#rotate" /></svg>Reset
+          </button>
+          <button type="button" class="button outline" id="addTop">
+            <svg aria-hidden="true"><use href="#plus" /></svg>Tambah foto
+          </button>
+        </div>
       </div>
       <div class="message" id="message" role="alert" hidden></div>
       <section class="batch" aria-labelledby="batchHeading">
@@ -4315,6 +4325,59 @@
           releaseCrop();
           if (!e.persisted) resetDecoder(Error("Halaman ditutup."));
         });
+        /* Reset seluruh ruang kerja tanpa reload halaman. */
+        function resetAll() {
+          if (
+            items.length &&
+            !confirm("Hapus semua foto dan kembalikan pengaturan ke awal?")
+          )
+            return;
+          if (busy) cancelJob();
+          ++jobId;
+          finishCropDrag();
+          releaseCrop();
+          items.forEach((item) => {
+            clearResult(item);
+            if (item.thumbURL) URL.revokeObjectURL(item.thumbURL);
+          });
+          items.length = 0;
+          activeId = null;
+          nextId = 1;
+          tab = "original";
+          if (downloadURL) {
+            URL.revokeObjectURL(downloadURL);
+            downloadURL = "";
+          }
+          looseURLs.forEach((url) => URL.revokeObjectURL(url));
+          looseURLs.length = 0;
+
+          say();
+          $("progressPanel").hidden = true;
+          $("progressBar").style.width = "0";
+          $("progressPercent").textContent = "0%";
+          $("progressTrack").setAttribute("aria-valuenow", "0");
+          $("progressLabel").textContent = "Menyiapkan…";
+          $("progressNote").textContent =
+            "Foto diproses bergantian untuk menghemat memori.";
+          $("cancelJob").hidden = false;
+          $("downloadStatus").textContent = "";
+          $("downloadAgain").hidden = true;
+          $("downloadAgain").removeAttribute("href");
+          $("fileInput").value = "";
+
+          // Pengaturan kelompok kembali ke nilai awal.
+          $("batchTarget").value = 150;
+          $("batchUnit").value = "1000";
+          $("batchFormat").value = "image/webp";
+          $("batchEdge").value = "0";
+          previousBatchUnit = 1000;
+
+          renderQueue();
+          syncInspector();
+          renderPreview();
+        }
+        $("resetAll").addEventListener("click", resetAll);
+
         renderQueue();
         syncInspector();
       })();
