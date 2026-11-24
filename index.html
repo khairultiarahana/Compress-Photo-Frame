@@ -4327,11 +4327,6 @@
         });
         /* Reset seluruh ruang kerja tanpa reload halaman. */
         function resetAll() {
-          if (
-            items.length &&
-            !confirm("Hapus semua foto dan kembalikan pengaturan ke awal?")
-          )
-            return;
           if (busy) cancelJob();
           ++jobId;
           finishCropDrag();
